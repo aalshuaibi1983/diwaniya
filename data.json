@@ -1,0 +1,28 @@
+{
+ "version": 2,
+ "updatedAt": 0,
+ "settings": {
+  "fundName": "الديوانية",
+  "managerName": "",
+  "pinHash": "",
+  "openingBalance": 0,
+  "dueDay": 27,
+  "nextReceipt": 1,
+  "repo": {
+   "owner": "aalshuaibi1983",
+   "name": "diwaniya",
+   "branch": "main",
+   "path": "data.json"
+  }
+ },
+ "years": {
+  "2026": {
+   "fee": 0,
+   "opening": null,
+   "payments": {}
+  }
+ },
+ "members": [],
+ "expenses": [],
+ "receipts": []
+}
