@@ -440,7 +440,7 @@ function vHome(){
   let h='';
   if(!D.members.length&&!isAdmin)return `<div class="card empty"><span class="ic">☕</span>لم تُضف بيانات الصندوق بعد.<br>سيظهر هنا رصيد الصندوق والقطة الشهرية فور تحديث المدير.</div>`;
   h+=`<div class="card hero"><div class="lbl">${isLast?'رصيد الصندوق الحالي':'رصيد نهاية '+y}</div><div class="big">${fmt(cl)} <span>ر.س</span></div>
-  <div class="live">${isAdmin?(canPublish()?'⚡ نشر تلقائي فوري مفعّل':'⚠️ النشر التلقائي غير مفعّل — أكمل إعدادات النشر'):'<i></i> مباشر · يتحدث تلقائياً'}</div><div class="upd">${D.updatedAt?'آخر تحديث: '+new Date(D.updatedAt).toLocaleString('en-GB',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):''}</div></div><!--ME-->`;
+  <div class="live">${isAdmin?(canPublish()?'⚡ نشر تلقائي فوري مفعّل':'⚠️ النشر التلقائي غير مفعّل على هذا الجهاز'):'<i></i> مباشر · يتحدث تلقائياً'}</div><div class="upd">${D.updatedAt?'آخر تحديث: '+new Date(D.updatedAt).toLocaleString('en-GB',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):''}</div></div><!--ME-->`;
   if(isAdmin){
     if(!D.members.length||!fee(y))h+=`<div class="card" style="background:var(--gold2);border-color:#e8d79a"><b>🚀 البداية في 3 خطوات</b><ol style="margin:8px 0 0;padding-inline-start:20px">
       <li>${fee(y)?'✅':''} حدّد قيمة القطة الشهرية والرصيد الافتتاحي <button class="btn sm l" onclick="go('settings')">الإعدادات</button></li>
@@ -614,15 +614,16 @@ function vSettings(){
     <p style="margin:0 0 10px;color:var(--mut);font-size:14px">يظهر تنبيه في الصفحة قبل موعد القطة بثلاثة أيام. ويمكنك إضافة تذكير متكرر في تقويم جوالك يوم ${s.dueDay} من كل شهر.</p>
     <div class="row"><button class="btn gd" onclick="downloadICS()">📅 إضافة التذكير لتقويم الجوال</button><button class="btn l" onclick="reminderModal()">📄 تذكير PDF</button></div></div>
 
-  <div class="card"><h2>⬆ النشر على GitHub</h2>
+  ${SETUP?`<div class="card"><h2>⬆ النشر على GitHub</h2>
     <p style="margin:0 0 10px;color:var(--mut);font-size:14px">بعد حفظ هذه الإعدادات يُنشر كل تعديل تلقائياً خلال ثانية، وتتحدث صفحة الأعضاء المفتوحة خلال ثوانٍ دون إعادة تحميل.</p>
     <div class="f2"><div class="f"><label>اسم حساب GitHub</label><input id="g_owner" dir="ltr" value="${esc(r.owner||repoGuess()?.owner||'')}" placeholder="username"></div>
     <div class="f"><label>اسم المستودع</label><input id="g_repo" dir="ltr" value="${esc(r.name||repoGuess()?.name||'estiraha')}"></div></div>
     <div class="f2"><div class="f"><label>الفرع</label><input id="g_branch" dir="ltr" value="${esc(r.branch||'main')}"></div>
     <div class="f"><label>ملف البيانات</label><input id="g_path" dir="ltr" value="${esc(r.path||'data.json')}"></div></div>
     <div class="f"><label>رمز الوصول (Token)</label><input id="g_token" dir="ltr" type="password" value="${esc(tk)}" placeholder="github_pat_…"><span class="hint">يُحفظ مشفّراً بكلمة مرور المدير — عند الدخول من جوال جديد بكلمة المرور يعمل النشر تلقائياً دون إدخاله مرة أخرى</span></div>
-    <div class="row"><button class="btn p" onclick="saveRepo()">حفظ</button><button class="btn gd" onclick="saveRepo(true)">حفظ ونشر الآن</button></div></div>
-
+    <div class="row"><button class="btn p" onclick="saveRepo()">حفظ</button><button class="btn gd" onclick="saveRepo(true)">حفظ ونشر الآن</button></div></div>`
+  :`<div class="card"><h2>⬆ النشر للأعضاء</h2><span class="badge ${canPublish()?'b-ok':'b-r'}" style="font-size:14px;padding:6px 12px">${canPublish()?'✓ النشر التلقائي مفعّل':'✗ النشر غير مفعّل على هذا الجهاز'}</span>
+    <p style="margin:10px 0 0;color:var(--mut);font-size:14px">${canPublish()?'كل تعديل تضيفه يظهر للأعضاء خلال ثوانٍ.':'سجّل الخروج ثم ادخل بكلمة المرور ليتفعّل تلقائياً، أو تواصل مع مسؤول البوابة.'}</p></div>`}
   <div class="card"><h2>🔒 الأمان والنسخ الاحتياطي</h2>
     <div class="row"><button class="btn l" onclick="changePin()">تغيير كلمة المرور</button><button class="btn l" onclick="exportJSON()">⬇ تنزيل نسخة احتياطية</button>
     <label class="btn l">⬆ استيراد نسخة<input type="file" accept=".json" hidden onchange="importJSON(this.files[0])"></label>
@@ -814,6 +815,7 @@ function downloadICS(){
 
 /* =============== النشر =============== */
 let _pw='';
+const SETUP=new URLSearchParams(location.search).has('setup');
 const B64=u=>{let s='';u.forEach(c=>s+=String.fromCharCode(c));return btoa(s)}, UB64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
 async function pbk(pw,salt){const k=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveKey','deriveBits']);return k}
 async function aesKey(pw,salt){const k=await pbk(pw);return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:310000,hash:'SHA-256'},k,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])}
@@ -832,7 +834,7 @@ async function saveRepo(pub){const r=D.settings.repo;r.owner=$('g_owner').value.
   if(_pw)fin();else askPw(fin)}
 const b64=s=>{const bytes=new TextEncoder().encode(s);let bin='';for(let i=0;i<bytes.length;i+=8192)bin+=String.fromCharCode.apply(null,bytes.subarray(i,i+8192));return btoa(bin)};
 async function doPublish(auto){
-  if(!canPublish()){if(!auto){toast('أكمل إعدادات النشر أولاً');tab='settings';render()}return}
+  if(!canPublish()){if(!auto)toast(SETUP?'أكمل إعدادات النشر أولاً':'النشر غير مفعّل — سجّل الدخول بكلمة المرور من جديد');return}
   if(publishing){pubAgain=true;return}
   publishing=true;pubState='busy';paintPub();
   const r=D.settings.repo,tk=localStorage.getItem(LS_TOKEN);
