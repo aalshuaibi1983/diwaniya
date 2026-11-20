@@ -1,6 +1,6 @@
 {
  "version": 2,
- "updatedAt": 1795217282247,
+ "updatedAt": 1795217398060,
  "settings": {
   "fundName": "الديوانية",
   "managerName": "بو عيسى",
@@ -22,7 +22,36 @@
    "payments": {}
   }
  },
- "members": [],
+ "members": [
+  {
+   "id": "mwpm35m3e1xp",
+   "name": "بو عيسى",
+   "phone": "",
+   "joined": "2026-11",
+   "active": true
+  },
+  {
+   "id": "mwpm35m3lxuz",
+   "name": "عبدالله سعد",
+   "phone": "",
+   "joined": "2026-11",
+   "active": true
+  },
+  {
+   "id": "mwpm35m37mzj",
+   "name": "نواف سعد",
+   "phone": "",
+   "joined": "2026-11",
+   "active": true
+  },
+  {
+   "id": "mwpm35m3xq57",
+   "name": "بو طلال",
+   "phone": "",
+   "joined": "2026-11",
+   "active": true
+  }
+ ],
  "expenses": [],
  "receipts": []
 }
