@@ -620,11 +620,11 @@ function vSettings(){
     <div class="f"><label>اسم المستودع</label><input id="g_repo" dir="ltr" value="${esc(r.name||repoGuess()?.name||'estiraha')}"></div></div>
     <div class="f2"><div class="f"><label>الفرع</label><input id="g_branch" dir="ltr" value="${esc(r.branch||'main')}"></div>
     <div class="f"><label>ملف البيانات</label><input id="g_path" dir="ltr" value="${esc(r.path||'data.json')}"></div></div>
-    <div class="f"><label>رمز الوصول (Token)</label><input id="g_token" dir="ltr" type="password" value="${esc(tk)}" placeholder="github_pat_…"><span class="hint">يُحفظ على هذا الجهاز فقط ولا يُنشر أبداً</span></div>
+    <div class="f"><label>رمز الوصول (Token)</label><input id="g_token" dir="ltr" type="password" value="${esc(tk)}" placeholder="github_pat_…"><span class="hint">يُحفظ مشفّراً بكلمة مرور المدير — عند الدخول من جوال جديد بكلمة المرور يعمل النشر تلقائياً دون إدخاله مرة أخرى</span></div>
     <div class="row"><button class="btn p" onclick="saveRepo()">حفظ</button><button class="btn gd" onclick="saveRepo(true)">حفظ ونشر الآن</button></div></div>
 
   <div class="card"><h2>🔒 الأمان والنسخ الاحتياطي</h2>
-    <div class="row"><button class="btn l" onclick="changePin()">تغيير الرقم السري</button><button class="btn l" onclick="exportJSON()">⬇ تنزيل نسخة احتياطية</button>
+    <div class="row"><button class="btn l" onclick="changePin()">تغيير كلمة المرور</button><button class="btn l" onclick="exportJSON()">⬇ تنزيل نسخة احتياطية</button>
     <label class="btn l">⬆ استيراد نسخة<input type="file" accept=".json" hidden onchange="importJSON(this.files[0])"></label>
     ${dirty?'<button class="btn r sm" onclick="discardLocal()">تجاهل التعديلات غير المنشورة</button>':''}</div></div>`;
 }
@@ -813,8 +813,23 @@ function downloadICS(){
 }
 
 /* =============== النشر =============== */
-function saveRepo(pub){const r=D.settings.repo;r.owner=$('g_owner').value.trim();r.name=$('g_repo').value.trim();r.branch=$('g_branch').value.trim()||'main';r.path=$('g_path').value.trim()||'data.json';
-  const t=$('g_token').value.trim();if(t)localStorage.setItem(LS_TOKEN,t);else localStorage.removeItem(LS_TOKEN);save('تم حفظ إعدادات النشر');if(pub)doPublish()}
+let _pw='';
+const B64=u=>{let s='';u.forEach(c=>s+=String.fromCharCode(c));return btoa(s)}, UB64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function pbk(pw,salt){const k=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveKey','deriveBits']);return k}
+async function aesKey(pw,salt){const k=await pbk(pw);return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:310000,hash:'SHA-256'},k,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])}
+async function pinHash(pw){const k=await pbk(pw);const b=await crypto.subtle.deriveBits({name:'PBKDF2',salt:new TextEncoder().encode('diwaniya-admin-pin'),iterations:310000,hash:'SHA-256'},k,256);return 'p2:'+B64(new Uint8Array(b))}
+async function checkPin(pw,h){return h.startsWith('p2:')?(await pinHash(pw))===h:(await sha(pw))===h}
+async function encTok(tok,pw){const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12));const ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},await aesKey(pw,salt),new TextEncoder().encode(tok)));return{salt:B64(salt),iv:B64(iv),ct:B64(ct)}}
+async function decTok(e,pw){return new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:UB64(e.iv)},await aesKey(pw,UB64(e.salt)),UB64(e.ct)))}
+function askPw(cb){openModal('تأكيد كلمة المرور',`<p style="margin:0 0 12px;color:var(--mut)">اكتب كلمة مرور المدير لحفظ مفتاح النشر مشفّراً.</p><div class="f"><input id="cpw" type="password" autocomplete="current-password"></div><button class="btn p" style="width:100%" id="cpwb">متابعة</button>`);
+  $('cpwb').onclick=async()=>{const p=$('cpw').value.trim();if(!(await checkPin(p,D.settings.pinHash)))return toast('كلمة المرور غير صحيحة');_pw=p;closeModal();cb()}}
+async function saveRepo(pub){const r=D.settings.repo;r.owner=$('g_owner').value.trim();r.name=$('g_repo').value.trim();r.branch=$('g_branch').value.trim()||'main';r.path=$('g_path').value.trim()||'data.json';
+  const t=$('g_token').value.trim();
+  if(!t){localStorage.removeItem(LS_TOKEN);delete D.settings.tokenEnc;save('تم حذف مفتاح النشر');return}
+  localStorage.setItem(LS_TOKEN,t);
+  const fin=async()=>{if(_pw.length<8){save('تم الحفظ على هذا الجهاز');toast('لحفظ المفتاح لكل الأجهزة غيّر كلمة المرور إلى 8 أحرف أو أكثر');if(pub)doPublish();return}
+    D.settings.tokenEnc=await encTok(t,_pw);save('✓ تم حفظ مفتاح النشر مشفّراً — يعمل من أي جهاز');if(pub)doPublish()};
+  if(_pw)fin();else askPw(fin)}
 const b64=s=>{const bytes=new TextEncoder().encode(s);let bin='';for(let i=0;i<bytes.length;i+=8192)bin+=String.fromCharCode.apply(null,bytes.subarray(i,i+8192));return btoa(bin)};
 async function doPublish(auto){
   if(!canPublish()){if(!auto){toast('أكمل إعدادات النشر أولاً');tab='settings';render()}return}
@@ -849,24 +864,31 @@ function discardLocal(){askConfirm('تجاهل كل التعديلات غير ا
 /* =============== الدخول =============== */
 function adminEntry(){
   const has=!!D.settings.pinHash;
-  openModal('دخول المدير',has?`<div class="f"><label>الرقم السري</label><input id="pin1" type="password" inputmode="numeric" autocomplete="current-password" onkeydown="if(event.key==='Enter')login()"></div><button class="btn p" style="width:100%" onclick="login()">دخول</button>`
-  :`<p style="margin:0 0 12px;color:var(--mut)">أول دخول: أنشئ رقماً سرياً للمدير (4 أرقام أو أكثر).</p><div class="f"><label>الرقم السري الجديد</label><input id="pin1" type="password" inputmode="numeric"></div><div class="f"><label>تأكيد الرقم</label><input id="pin2" type="password" inputmode="numeric"></div><button class="btn p" style="width:100%" onclick="login()">إنشاء ودخول</button>`);
+  openModal('دخول المدير',has?`<div class="f"><label>كلمة مرور المدير</label><input id="pin1" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')login()"></div><button class="btn p" style="width:100%" id="lgb" onclick="login()">دخول</button>`
+  :`<p style="margin:0 0 12px;color:var(--mut)">أول دخول: أنشئ كلمة مرور للمدير (8 أحرف أو أرقام على الأقل). احفظها جيداً، فهي التي تفتح البوابة من أي جوال.</p><div class="f"><label>كلمة المرور الجديدة</label><input id="pin1" type="password" autocomplete="new-password"></div><div class="f"><label>تأكيدها</label><input id="pin2" type="password" autocomplete="new-password"></div><button class="btn p" style="width:100%" id="lgb" onclick="login()">إنشاء ودخول</button>`);
   setTimeout(()=>$('pin1')?.focus(),150);
 }
 async function login(){
-  const p1=$('pin1').value.trim();
-  if(!D.settings.pinHash){const p2=$('pin2').value.trim();if(p1.length<4)return toast('4 أرقام على الأقل');if(p1!==p2)return toast('الرقمان غير متطابقين');D.settings.pinHash=await sha(p1);enterAdmin();save('تم إنشاء الرقم السري — انشر لحفظه');return}
-  if(await sha(p1)!==D.settings.pinHash)return toast('الرقم السري غير صحيح');
-  enterAdmin();
+  const p1=$('pin1').value.trim(),btn=$('lgb');
+  if(!D.settings.pinHash){const p2=$('pin2').value.trim();if(p1.length<8)return toast('8 أحرف أو أرقام على الأقل');if(p1!==p2)return toast('كلمتا المرور غير متطابقتين');
+    btn.disabled=true;D.settings.pinHash=await pinHash(p1);_pw=p1;enterAdmin();save('تم إنشاء كلمة المرور');return}
+  btn.disabled=true;btn.textContent='⏳ جاري التحقق…';
+  if(!(await checkPin(p1,D.settings.pinHash))){btn.disabled=false;btn.textContent='دخول';return toast('كلمة المرور غير صحيحة')}
+  _pw=p1;
+  let restored=false;
+  if(D.settings.tokenEnc&&!localStorage.getItem(LS_TOKEN)){try{localStorage.setItem(LS_TOKEN,await decTok(D.settings.tokenEnc,p1));restored=true}catch(e){}}
+  enterAdmin();if(restored)toast('🔑 تم تفعيل النشر على هذا الجهاز تلقائياً');
 }
 function enterAdmin(){
   isAdmin=true;sessionStorage.setItem(SS_ADMIN,'1');closeModal();
   try{const loc=JSON.parse(localStorage.getItem(LS_DATA)||'null');if(loc&&num(loc.updatedAt)>num(D.updatedAt)){D=normalize(loc);dirty=true}}catch(e){}
   render();toast('أهلاً بك في وضع المدير');
 }
-function logout(){const go2=()=>{isAdmin=false;sessionStorage.removeItem(SS_ADMIN);if(tab==='settings')tab='home';render()};dirty?askConfirm('لديك تعديلات غير منشورة (محفوظة على جهازك). خروج؟',go2,'خروج'):go2()}
-function changePin(){openModal('تغيير الرقم السري',`<div class="f"><label>الرقم الجديد</label><input id="np1" type="password" inputmode="numeric"></div><div class="f"><label>تأكيد</label><input id="np2" type="password" inputmode="numeric"></div><button class="btn p" style="width:100%" onclick="setPin()">حفظ</button>`)}
-async function setPin(){const a=$('np1').value.trim(),b=$('np2').value.trim();if(a.length<4)return toast('4 أرقام على الأقل');if(a!==b)return toast('غير متطابق');D.settings.pinHash=await sha(a);closeModal();save('تم التغيير — انشر ليُعتمد على كل الأجهزة')}
+function logout(){const go2=()=>{isAdmin=false;_pw='';sessionStorage.removeItem(SS_ADMIN);if(tab==='settings')tab='home';render()};dirty?askConfirm('لديك تعديلات غير منشورة (محفوظة على جهازك). خروج؟',go2,'خروج'):go2()}
+function changePin(){openModal('تغيير كلمة المرور',`<div class="f"><label>كلمة المرور الحالية</label><input id="np0" type="password" autocomplete="current-password"></div><div class="f"><label>الجديدة (8 على الأقل)</label><input id="np1" type="password" autocomplete="new-password"></div><div class="f"><label>تأكيد الجديدة</label><input id="np2" type="password" autocomplete="new-password"></div><button class="btn p" style="width:100%" onclick="setPin()">حفظ</button>`)}
+async function setPin(){const o=$('np0').value.trim(),a=$('np1').value.trim(),b=$('np2').value.trim();
+  if(!(await checkPin(o,D.settings.pinHash)))return toast('كلمة المرور الحالية غير صحيحة');if(a.length<8)return toast('8 أحرف أو أرقام على الأقل');if(a!==b)return toast('غير متطابقة');
+  D.settings.pinHash=await pinHash(a);_pw=a;const t=localStorage.getItem(LS_TOKEN);if(t)D.settings.tokenEnc=await encTok(t,a);closeModal();save('✓ تم تغيير كلمة المرور')}
 
 /* =============== التشغيل =============== */
 (async function init(){
