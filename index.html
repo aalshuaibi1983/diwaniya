@@ -294,7 +294,7 @@ hr.s{border:0;border-top:1px solid var(--bd);margin:16px 0}
 .months .mo:has(.mh input:checked:not(:disabled)){border-color:var(--g);background:var(--g3)}
 #p_amt[readonly]{background:var(--soft2);font-weight:800}
 /* PDF templates */
-#pdf-holder{position:fixed;top:0;left:-12000px;z-index:-1}
+#pdf-holder{position:fixed;top:0;left:0;z-index:-5;opacity:0;pointer-events:none;direction:rtl}
 .pdf{background:#fff;color:#1d2b26;font-family:var(--font),sans-serif;direction:rtl;letter-spacing:0}
 .pdf *{letter-spacing:0}
 .pdf .ph{background:var(--pdfh);color:#fff;padding:22px 26px;display:flex;align-items:center;justify-content:space-between}
@@ -913,12 +913,18 @@ function reminderHTML(mo){
 }
 function portalURL(){const r=repoGuess();if(r&&r.owner&&r.name&&!r.name.endsWith('.github.io'))return `https://${r.owner}.github.io/${r.name}/`;return location.origin+location.pathname}
 function linkBox(t){return `<div class="linkbox">${t||'رابط البوابة'}<b>${portalURL()}</b></div>`}
+let _fontCSS='';
+
 let _pdf=null,_shareText='';
 async function makePdf(html,filename,format){
   const holder=$('pdf-holder');holder.innerHTML=html;const el=holder.firstElementChild;
   try{await document.fonts.ready}catch(e){}
   if(!window.html2pdf){holder.innerHTML='';return null}
-  const blob=await html2pdf().set({margin:0,filename,image:{type:'jpeg',quality:0.97},html2canvas:{scale:2.2,useCORS:true,backgroundColor:'#ffffff',windowWidth:el.offsetWidth},jsPDF:{unit:'mm',format,orientation:'portrait'},pagebreak:{mode:['css','legacy'],avoid:'tr'}}).from(el).outputPdf('blob');
+  const w=el.offsetWidth;const opt=fo=>({margin:0,filename,image:{type:'jpeg',quality:0.97},html2canvas:{scale:2.5,useCORS:true,backgroundColor:'#ffffff',scrollX:0,scrollY:0,x:0,y:0,windowWidth:w,width:w,foreignObjectRendering:fo,
+    onclone:doc=>{doc.documentElement.setAttribute('dir','ltr');doc.body.style.direction='ltr';doc.body.style.margin='0';doc.body.style.padding='0';if(fo&&_fontCSS){const st=doc.createElement('style');st.textContent=_fontCSS;doc.head.appendChild(st)}}},jsPDF:{unit:'mm',format,orientation:'portrait'},pagebreak:{mode:['css','legacy'],avoid:'tr'}});
+  const H=document.documentElement,od=H.getAttribute('dir');H.setAttribute('dir','ltr');
+  let blob;try{blob=await html2pdf().set(opt(window.PDF_FO!==undefined?window.PDF_FO:true)).from(el).outputPdf('blob');if(!blob||blob.size<3000)throw 0}catch(e){blob=await html2pdf().set(opt(false)).from(el).outputPdf('blob')}
+  finally{H.setAttribute('dir',od||'rtl')}
   holder.innerHTML='';
   return new File([blob],filename,{type:'application/pdf'});
 }
