@@ -607,12 +607,12 @@ function vHome(){
   if(mi.all.length){
     h+=`<div class="card"><h2>قطة شهر ${MONTHS[mo-1]} ${y}<span class="sub">${mi.paid.length} من ${mi.all.length} سددوا</span></h2>
     <div class="progress"><i style="width:${pct}%"></i></div>
-    ${(()=>{const srt=a=>a.slice().sort((p,q)=>p.name.localeCompare(q.name,'ar'));
+    ${(()=>{const srt=a=>a.slice().sort((p,q)=>(q.id===myId())-(p.id===myId())||p.name.localeCompare(q.name,'ar'));
       const card=(m,c)=>{const lbl=c==='ok'?'✓ سدّد '+fdate(pays(y,m.id)[mo].date).slice(0,5):c==='no'?'متأخر':c==='free'?'مبلغ مقطوع':'لم يسدد بعد';
         return `<button class="nc ${c}" onclick="${isAdmin?`memberCard('${m.id}')`:`statementModal('${m.id}')`}">${avatar(m)}<b>${esc(m.name)}${m.id===myId()?' '+STAR:''}</b><span class="ps">${lbl}</span></button>`};
       const due=mi.unpaid.some(m=>cellState(m,y,mo)==='due');
       const frees=members(y).filter(m=>isFree(m)&&m.active!==false);
-      return `<div class="hint2" style="margin:10px 0 0;color:var(--mut);font-size:13px">${isAdmin?'اضغط على أي عضو لتعديله أو تسجيل دفعته':'اضغط على اسمك لعرض حسابك'}</div>`
+      return `<div class="hint2" style="margin:10px 0 0;color:var(--mut);font-size:13px">${isAdmin?'اضغط على أي عضو لتعديله أو تسجيل دفعته':myId()?'اضغط على أي اسم لعرض حسابه':'اضغط على اسمك لعرض حسابك، واختر «اجعله حسابي المفضّل» لتظهر بطاقتك أعلى الصفحة'}</div>`
        +(mi.paid.length?`<div class="mgrp"><h4><span>سددوا</span><span>${mi.paid.length}</span></h4><div class="ncg">${srt(mi.paid).map(m=>card(m,'ok')).join('')}</div></div>`:'')
        +(mi.unpaid.length?`<div class="mgrp"><h4><span>${due?'لم يسددوا':'لم يسددوا بعد · الموعد '+D.settings.dueDay+' '+MONTHS[mo-1]}</span><span>${mi.unpaid.length}</span></h4><div class="ncg">${srt(mi.unpaid).map(m=>card(m,cellState(m,y,mo)==='due'?'no':'pend')).join('')}</div></div>`:'')
        +(frees.length?`<div class="mgrp"><h4><span>مساهمون بمبلغ مقطوع</span><span>${frees.length}</span></h4><div class="ncg">${srt(frees).map(m=>card(m,'free')).join('')}</div></div>`:'')})()}
@@ -623,8 +623,7 @@ function vHome(){
       h=h.replace('<!--ME-->',`<div class="card me-card"><div class="me-top">${avatar(me)}<div style="flex:1;min-width:0"><small style="color:var(--mut)">حسابي</small><div style="font-weight:800;font-size:18px">${esc(me.name)}</div></div><span class="badge ${st.c}">${st.t}</span></div>
       <div class="sbox" style="margin:12px 0 10px"><div><small>المدفوع ${y}</small><b style="color:var(--ok)">${fmt(memberPaid(me,y))}</b></div><div><small>المسدد</small><b>${dc.paid}/${dc.due}</b></div><div><small>المتأخرات</small><b style="color:${a.count?'var(--red)':'var(--ok)'}">${fmt(a.amount)}</b></div></div>
       <button class="btn p" style="width:100%" onclick="statementModal('${me.id}')"><svg class="i" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 3h6v3H9zM9 11h6M9 15h6"/></svg> عرض كشف حسابي</button></div>`)}
-    else h=h.replace('<!--ME-->',`<div class="card me-card" style="text-align:center"><div style="font-size:30px;color:var(--gold)"><svg class="i" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 3h6v3H9zM9 11h6M9 15h6"/></svg></div><b style="font-size:17px">اعرض كشف حسابك</b><div style="color:var(--mut);font-size:14px;margin-bottom:10px">اختر اسمك لمعرفة مدفوعاتك ومتأخراتك</div>
-      <select class="search" style="margin:0" onchange="if(this.value)statementModal(this.value)"><option value="">— اختر اسمك —</option>${members(y).slice().sort((a,b)=>a.name.localeCompare(b.name,'ar')).map(m=>`<option value="${m.id}">${esc(m.name)}</option>`).join('')}</select></div>`)}
+}
   const ex5=yExp(y).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5);
   h+=`<div class="card"><h2>آخر المصروفات<span class="sub">${ex5.length?`<button class="btn sm l" onclick="go('expenses')">عرض الكل</button>`:''}</span></h2>${ex5.length?`<div class="list">${ex5.map(expRow).join('')}</div>`:`<div class="empty">لا توجد مصروفات في ${y}</div>`}</div>`;
   return h;
@@ -676,7 +675,7 @@ function mStatus(m,y){if(m.active===false)return{c:'b-w',t:'منسحب'};if(isFr
 function dueCount(m,y){let c=0,p=0;for(let mo=1;mo<=12;mo++){const st=cellState(m,y,mo);if(st==='due'||(st==='paid'))c++;if(st==='paid')p++}return{due:c,paid:p}}
 function memberYears(m){return years().filter(y=>activeIn(m,y)&&(Object.keys(pays(y,m.id)).length||joinYM(m).jy<=y))}
 function myId(){try{return localStorage.getItem(LS_ME)||''}catch(e){return''}}
-function setMe(id){try{myId()===id?localStorage.removeItem(LS_ME):localStorage.setItem(LS_ME,id)}catch(e){}statementModal(id,_stY);render();toast(myId()===id?'تم حفظه كحسابك — يظهر في الرئيسية':'تم الإلغاء')}
+function setMe(id){try{myId()===id?localStorage.removeItem(LS_ME):localStorage.setItem(LS_ME,id)}catch(e){}statementModal(id,_stY);render();toast(myId()===id?'تم — بطاقتك تظهر أعلى الصفحة الرئيسية':'تم الإلغاء')}
 function paidLabel(m,y){
   if(isFree(m)){const n=extrasOf(y,m.id).length;return n?`ساهم ${n} ${n>2&&n<11?'مرات':'مرة'} في ${y}`:'غير ملزم بالقطة الشهرية'}
   const ps=Object.keys(pays(y,m.id)).map(Number).sort((a,b)=>a-b),a=arrears(m,y).count;
@@ -724,7 +723,7 @@ function statementModal(id,y){
   <div class="tiles">${tiles}</div>`}
   <div class="sec-t"><span>سجل المدفوعات</span><small style="color:var(--mut);font-weight:500">الإجمالي منذ الانضمام ${money(allPaid)}</small></div>
   ${rc.length?`<div class="list hist">${rc.map(r=>`<div class="li ${isAdmin?'click':''}" ${isAdmin?`onclick="receiptModal(${r.no})"`:''}><div class="ico"><svg class="i" viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg></div><div class="mid"><b>${r.months.length?r.months.map(x=>MONTHS[x-1]).join('، '):'مساهمة'}</b><small>${fdate(r.date)} · إيصال #${r.no}${isAdmin?' · اضغط للإرسال':''}</small></div><div class="amt"><bdi dir="ltr">+${fmt(r.amount)}</bdi></div></div>`).join('')}</div>`:`<div class="empty" style="padding:12px">لا توجد مدفوعات في ${y}</div>`}
-  <div class="row" style="margin-top:16px">${pdfBtn}${isAdmin?'':`<button class="btn mebtn" onclick="setMe('${id}')">${myId()===id?'<svg class="i" viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.5 2.9 1-6.1-4.4-4.3 6.1-.9z" style="fill:currentColor"/></svg> حسابي':'☆ هذا أنا'}</button>`}</div>
+  <div class="row" style="margin-top:16px">${pdfBtn}${isAdmin?'':`<button class="btn mebtn" onclick="setMe('${id}')">${myId()===id?'<svg class="i" viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.5 2.9 1-6.1-4.4-4.3 6.1-.9z" style="fill:currentColor"/></svg> حسابي المفضّل':'☆ اجعله حسابي المفضّل'}</button>`}</div>
   <div id="pdfbox" style="margin-top:10px"></div>`);
 }
 function statementHTML(m,y){
