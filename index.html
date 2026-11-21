@@ -60,6 +60,7 @@ body[data-theme=sadu] .top:after{height:14px;background:url("data:image/svg+xml,
 .ysel{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.22);border-radius:10px;padding:5px 8px;font-weight:700;font-size:14px}
 .ysel option{color:#000}
 .pub{background:var(--gold);color:#2b2205;border:0;border-radius:10px;padding:6px 10px;font-weight:800;font-size:13px;cursor:pointer;white-space:nowrap}
+.pub.ghost{background:rgba(255,255,255,.08);color:var(--gold);border:1px solid color-mix(in srgb,var(--gold) 60%,transparent);display:inline-flex;align-items:center;gap:5px}
 .pub.dirty{box-shadow:0 0 0 3px rgba(246,237,208,.6);animation:pulse 1.6s infinite}
 @keyframes pulse{50%{box-shadow:0 0 0 7px rgba(246,237,208,.15)}}
 .admin-badge{position:relative;z-index:1;max-width:980px;margin:10px auto 0;font-size:12.5px;color:var(--gold2);opacity:.9}
@@ -307,6 +308,7 @@ hr.s{border:0;border-top:1px solid var(--bd);margin:16px 0}
     <div class="top-actions">
       <select class="ysel" id="yearSel" onchange="setYear(this.value)" aria-label="السنة"></select>
       <button class="pub hidden" id="pubBtn" onclick="doPublish()">نشر</button>
+      <button class="pub ghost hidden" id="loginBtn" onclick="adminEntry()"><svg class="i" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16.5 6.5l3 3"/></svg> دخول المدير</button>
     </div>
   </div>
   <div class="admin-badge hidden" id="adminBadge"><svg class="i" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16.5 6.5l3 3"/></svg> وضع المدير — كل تعديل يُنشر للأعضاء فوراً</div>
@@ -464,6 +466,7 @@ function render(){
   const ys=years().slice().reverse();
   $('yearSel').innerHTML=ys.map(y=>`<option value="${y}" ${y===curYear?'selected':''}>${y}</option>`).join('');
   $('pubBtn').classList.toggle('hidden',!isAdmin);
+  $('loginBtn').classList.toggle('hidden',isAdmin);
   paintPub();
   $('adminBadge').classList.toggle('hidden',!isAdmin);
   document.body.classList.toggle('admin',isAdmin);
