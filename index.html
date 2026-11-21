@@ -274,6 +274,18 @@ hr.s{border:0;border-top:1px solid var(--bd);margin:16px 0}
 .freetag{display:inline-block;font-size:11.5px;font-weight:800;color:var(--gold);background:var(--gold2);border-radius:99px;padding:1px 8px;margin-top:2px}
 .linkbox{margin-top:16px;border:1.5px dashed #c9b48a;border-radius:12px;padding:12px 14px;text-align:center;font-size:15px;color:#4a3a2a}
 .linkbox b{display:block;font-size:17px;color:#1d2b26;margin-top:4px;direction:ltr}
+.mgrp h4{display:flex;justify-content:space-between;align-items:center;margin:14px 0 8px;font-size:13.5px;color:var(--mut);font-weight:800}
+.mgrp h4 span:last-child{background:var(--soft2);border-radius:99px;padding:1px 10px;color:var(--ink)}
+.mgrid{display:flex;flex-direction:column;border:1px solid var(--bd);border-radius:14px;overflow:hidden;background:var(--soft)}
+.mrow{display:flex;align-items:center;gap:10px;padding:11px 12px;border-top:1px solid var(--bd);font-weight:700;font-size:14px;cursor:pointer;min-width:0}
+.mrow:first-child{border-top:0}
+.mrow span{flex:1;min-width:0;font-size:15px}
+.mrow em{font-style:normal;font-size:12.5px;color:var(--mut);font-weight:700;white-space:nowrap}
+.mrow.ok em{color:var(--ok)}
+.mrow i{width:20px;height:20px;border-radius:50%;flex:none;display:grid;place-items:center;font-style:normal;font-size:11px;font-weight:800}
+.mrow.ok i{background:var(--ok);color:#fff}
+.mrow.no em{color:var(--red)} .mrow.no i{border:2px solid var(--red)}
+.mrow.pend i{border:2px dashed var(--mut)}
 /* PDF templates */
 #pdf-holder{position:fixed;top:0;left:-12000px;z-index:-1}
 .pdf{background:#fff;color:#1d2b26;font-family:var(--font),sans-serif;direction:rtl;letter-spacing:0}
@@ -557,7 +569,10 @@ function vHome(){
   if(mi.all.length){
     h+=`<div class="card"><h2>قطة شهر ${MONTHS[mo-1]} ${y}<span class="sub">${mi.paid.length} من ${mi.all.length} سددوا</span></h2>
     <div class="progress"><i style="width:${pct}%"></i></div>
-    <div class="chips">${mi.paid.map(m=>`<span class="chip ok">${esc(m.name)}</span>`).join('')}${mi.unpaid.map(m=>`<span class="chip ${cellState(m,y,mo)==='due'?'no':'pend'}">${esc(m.name)}</span>`).join('')}</div>
+    ${(()=>{const srt=a=>a.slice().sort((p,q)=>p.name.localeCompare(q.name,'ar'));const row=(m,c)=>`<div class="mrow ${c}" onclick="${isAdmin?`memberCard('${m.id}')`:`statementModal('${m.id}')`}"><i>${c==='ok'?'✓':''}</i><span>${esc(m.name)}</span><em>${c==='ok'?fdate(pays(y,m.id)[mo].date).slice(0,5):c==='no'?'متأخر':'لم يسدد بعد'}</em></div>`;
+      const due=mi.unpaid.some(m=>cellState(m,y,mo)==='due');
+      return (mi.paid.length?`<div class="mgrp"><h4><span>سددوا</span><span>${mi.paid.length}</span></h4><div class="mgrid">${srt(mi.paid).map(m=>row(m,'ok')).join('')}</div></div>`:'')
+       +(mi.unpaid.length?`<div class="mgrp"><h4><span>${due?'لم يسددوا':'لم يسددوا بعد · الموعد '+D.settings.dueDay+' '+MONTHS[mo-1]}</span><span>${mi.unpaid.length}</span></h4><div class="mgrid">${srt(mi.unpaid).map(m=>row(m,cellState(m,y,mo)==='due'?'no':'pend')).join('')}</div></div>`:'')})()}
     ${isAdmin&&mi.unpaid.length?`<div class="row" style="margin-top:12px"><button class="btn sm gd" onclick="reminderModal(${mo})"><svg class="i" viewBox="0 0 24 24"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h4"/></svg> تذكير PDF</button><button class="btn sm wa" onclick="waReminder(${mo})">إرسال تذكير واتساب</button></div>`:''}</div>`;
   }
   if(!isAdmin&&D.members.length){const me=D.members.find(m=>m.id===myId());
@@ -601,7 +616,7 @@ function vMembers(){
     const a=arrears(m,y);
     h+=`<tr><td class="nm" onclick="${isAdmin?`memberCard('${m.id}')`:`statementModal('${m.id}')`}">${esc(m.name)}${m.active===false?' <small style="color:#999">(منسحب)</small>':''}${isFree(m)?'<div><span class="freetag">مبلغ مقطوع</span></div>':''}${a.count?`<div class="arr">متأخر ${a.count} ${a.count>2&&a.count<11?'أشهر':'شهر'}</div>`:''}</td>`;
     for(let mo=1;mo<=12;mo++){const st=cellState(m,y,mo);const sym={paid:'✓',due:'!',up:'',na:'·'}[st];
-      h+=`<td><button class="cell c-${st}" ${isAdmin&&st!=='na'?`onclick="cellTap('${m.id}',${mo})"`:'tabindex="-1"'} title="${MONTHS[mo-1]}">${sym}</button></td>`}
+      h+=`<td><button class="cell c-${st}" ${isAdmin&&!isFree(m)?`onclick="cellTap('${m.id}',${mo})"`:'tabindex="-1"'} title="${MONTHS[mo-1]}">${sym}</button></td>`}
     h+=`<td class="tot">${fmt(memberPaid(m,y))}</td></tr>`;
   }
   h+=`</tbody></table></div>${!ms.length?'<div class="empty">لا توجد نتائج</div>':''}
@@ -811,12 +826,12 @@ function payMonths(pre){
   if(isFree(m)){$('p_mbox').classList.add('hidden');$('p_months').innerHTML='';$('p_amt').value='';$('p_sum').textContent='مساهمة بمبلغ مقطوع — اكتب المبلغ';setTimeout(()=>$('p_amt').focus(),100);return}
   $('p_mbox').classList.remove('hidden');
   let first=pre;if(!first){for(let i=1;i<=12;i++){const st=cellState(m,y,i);if(st==='due'||st==='up'){first=i;break}}}
-  $('p_months').innerHTML=MONTHS.map((n,i)=>{const mo=i+1,paid=!!p[mo],na=cellState(m,y,mo)==='na';
-    return `<label class="${paid||na?'dis':''}"><input type="checkbox" value="${mo}" ${paid?'checked disabled':na?'disabled':mo===first?'checked':''} onchange="payRecalc()">${n}${paid?' ✓':''}</label>`}).join('');
+  $('p_months').innerHTML=MONTHS.map((n,i)=>{const mo=i+1,paid=!!p[mo];
+    return `<label class="${paid?'dis':''}"><input type="checkbox" value="${mo}" ${paid?'checked disabled':mo===first?'checked':''} onchange="payRecalc()">${n}${paid?' ✓':''}</label>`}).join('');
   payRecalc();
 }
 function payRecalc(){const m=D.members.find(x=>x.id===$('p_m').value),f=mFee(m,curYear);const sel=[...document.querySelectorAll('#p_months input:checked:not(:disabled)')];$('p_amt').value=f?sel.length*f:($('p_amt').value||'');
-  $('p_sum').textContent=sel.length?`${sel.length} شهر: ${sel.map(i=>MONTHS[i.value-1]).join('، ')}`:'اختر شهراً واحداً على الأقل'}
+  $('p_sum').textContent=sel.length?`${sel.length} شهر: ${sel.map(i=>MONTHS[i.value-1]).join('، ')}${f?` — ${fmt(f)} ريال للشهر، ويمكنك تعديل المبلغ`:''}`:'اختر شهراً واحداً على الأقل'}
 function savePayment(){
   const mid=$('p_m').value,sel=[...document.querySelectorAll('#p_months input:checked:not(:disabled)')].map(i=>+i.value);
   const amt=num($('p_amt').value),date=$('p_date').value||todayISO(),note=$('p_note').value.trim();
