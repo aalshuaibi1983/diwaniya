@@ -314,6 +314,16 @@ hr.s{border:0;border-top:1px solid var(--bd);margin:16px 0}
 .pprow b{font-size:16px}.pprow small{color:var(--mut);font-size:12.5px}
 .pprow em{font-style:normal;font-weight:800;color:var(--mut);font-size:18px}
 .pprow em.ok{color:var(--ok)} .pprow em.no{color:var(--red)}
+.ncg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media(min-width:620px){.ncg{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.nc{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:7px;padding:14px 8px 12px;border:1px solid var(--bd);border-top:4px solid var(--line);border-radius:16px;background:var(--card);text-align:center;cursor:pointer;box-shadow:var(--sh);color:var(--ink);font-family:inherit;transition:transform .12s}
+.nc:active{transform:scale(.97)}
+.nc b{font-size:15px;line-height:1.35;font-weight:800}
+.nc b .i{color:var(--gold);width:14px;height:14px}
+.nc .ps{font-size:12px;font-weight:800;padding:2px 10px;border-radius:99px;background:var(--soft2);color:var(--mut);margin-top:auto}
+.nc.ok{border-top-color:var(--ok)} .nc.ok .ps{background:var(--ok2);color:var(--ok)}
+.nc.no{border-top-color:var(--red)} .nc.no .ps{background:var(--red2);color:var(--red)}
+.nc.free{border-top-color:var(--gold)} .nc.free .ps{background:var(--gold2);color:#8a6a1c}
 /* PDF templates */
 #pdf-holder{position:fixed;top:0;left:0;z-index:-5;opacity:0;pointer-events:none;direction:rtl}
 .pdf{background:#fff;color:#1d2b26;font-family:var(--font),sans-serif;direction:rtl;letter-spacing:0}
@@ -597,10 +607,15 @@ function vHome(){
   if(mi.all.length){
     h+=`<div class="card"><h2>قطة شهر ${MONTHS[mo-1]} ${y}<span class="sub">${mi.paid.length} من ${mi.all.length} سددوا</span></h2>
     <div class="progress"><i style="width:${pct}%"></i></div>
-    ${(()=>{const srt=a=>a.slice().sort((p,q)=>p.name.localeCompare(q.name,'ar'));const row=(m,c)=>`<div class="mrow ${c}" onclick="${isAdmin?`memberCard('${m.id}')`:`statementModal('${m.id}')`}"><i>${c==='ok'?'✓':''}</i><span>${esc(m.name)}</span><em>${c==='ok'?fdate(pays(y,m.id)[mo].date).slice(0,5):c==='no'?'متأخر':'لم يسدد بعد'}</em></div>`;
+    ${(()=>{const srt=a=>a.slice().sort((p,q)=>p.name.localeCompare(q.name,'ar'));
+      const card=(m,c)=>{const lbl=c==='ok'?'✓ سدّد '+fdate(pays(y,m.id)[mo].date).slice(0,5):c==='no'?'متأخر':c==='free'?'مبلغ مقطوع':'لم يسدد بعد';
+        return `<button class="nc ${c}" onclick="${isAdmin?`memberCard('${m.id}')`:`statementModal('${m.id}')`}">${avatar(m)}<b>${esc(m.name)}${m.id===myId()?' '+STAR:''}</b><span class="ps">${lbl}</span></button>`};
       const due=mi.unpaid.some(m=>cellState(m,y,mo)==='due');
-      return (mi.paid.length?`<div class="mgrp"><h4><span>سددوا</span><span>${mi.paid.length}</span></h4><div class="mgrid">${srt(mi.paid).map(m=>row(m,'ok')).join('')}</div></div>`:'')
-       +(mi.unpaid.length?`<div class="mgrp"><h4><span>${due?'لم يسددوا':'لم يسددوا بعد · الموعد '+D.settings.dueDay+' '+MONTHS[mo-1]}</span><span>${mi.unpaid.length}</span></h4><div class="mgrid">${srt(mi.unpaid).map(m=>row(m,cellState(m,y,mo)==='due'?'no':'pend')).join('')}</div></div>`:'')})()}
+      const frees=members(y).filter(m=>isFree(m)&&m.active!==false);
+      return `<div class="hint2" style="margin:10px 0 0;color:var(--mut);font-size:13px">${isAdmin?'اضغط على أي عضو لتعديله أو تسجيل دفعته':'اضغط على اسمك لعرض حسابك'}</div>`
+       +(mi.paid.length?`<div class="mgrp"><h4><span>سددوا</span><span>${mi.paid.length}</span></h4><div class="ncg">${srt(mi.paid).map(m=>card(m,'ok')).join('')}</div></div>`:'')
+       +(mi.unpaid.length?`<div class="mgrp"><h4><span>${due?'لم يسددوا':'لم يسددوا بعد · الموعد '+D.settings.dueDay+' '+MONTHS[mo-1]}</span><span>${mi.unpaid.length}</span></h4><div class="ncg">${srt(mi.unpaid).map(m=>card(m,cellState(m,y,mo)==='due'?'no':'pend')).join('')}</div></div>`:'')
+       +(frees.length?`<div class="mgrp"><h4><span>مساهمون بمبلغ مقطوع</span><span>${frees.length}</span></h4><div class="ncg">${srt(frees).map(m=>card(m,'free')).join('')}</div></div>`:'')})()}
     ${isAdmin&&mi.unpaid.length?`<div class="row" style="margin-top:12px"><button class="btn sm gd" onclick="reminderModal(${mo})"><svg class="i" viewBox="0 0 24 24"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h4"/></svg> تذكير PDF</button><button class="btn sm wa" onclick="waReminder(${mo})">إرسال تذكير واتساب</button></div>`:''}</div>`;
   }
   if(!isAdmin&&D.members.length){const me=D.members.find(m=>m.id===myId());
