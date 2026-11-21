@@ -1,6 +1,6 @@
 {
  "version": 2,
- "updatedAt": 1795255471340,
+ "updatedAt": 1795255508205,
  "settings": {
   "fundName": "الديوانية",
   "managerName": "بو عيسى",
@@ -22,7 +22,106 @@
    "payments": {}
   }
  },
- "members": [],
+ "members": [
+  {
+   "id": "mwq8rzl8gcgr",
+   "name": "محمد بن عبدالله",
+   "phone": "",
+   "joined": "2026-11",
+   "active": true
+  },
+  {
+   "id": "mwq8rzl9lfrt",
+   "name": "عبدالرحمن بن محمد",
+   "phone": "",
+   "joined": "2026-11",
+   "active": true
+  },
+  {
+   "id": "mwq8rzl9x44y",
+   "name": "عبدالله بن سعد",
+   "phone": "",
+   "joined": "2026-11",
+   "active": true
+  },
+  {
+   "id": "mwq8rzl9df9n",
+   "name": "ماهر بن عبداللطيف",
+   "phone": "",
+   "joined": "2026-11",
+   "active": true
+  },
+  {
+   "id": "mwq8rzl9v17y",
+   "name": "نواف بن سعد",
+   "phone": "",
+   "joined": "2026-11",
+   "active": true
+  },
+  {
+   "id": "mwq8rzl90w4q",
+   "name": "عبدالرحمن بن عبدالله",
+   "phone": "",
+   "joined": "2026-11",
+   "active": true
+  },
+  {
+   "id": "mwq8rzl95nt6",
+   "name": "عبدالرحمن بن خالد",
+   "phone": "",
+   "joined": "2026-11",
+   "active": true
+  },
+  {
+   "id": "mwq8rzl9s2nd",
+   "name": "أحمد بن سعد",
+   "phone": "",
+   "joined": "2026-11",
+   "active": true
+  },
+  {
+   "id": "mwq8rzl98xa8",
+   "name": "طارق بن عبدالله",
+   "phone": "",
+   "joined": "2026-11",
+   "active": true
+  },
+  {
+   "id": "mwq8rzl9e01r",
+   "name": "عبدالعزيز بن احمد",
+   "phone": "",
+   "joined": "2026-11",
+   "active": true
+  },
+  {
+   "id": "mwq8rzl9dkid",
+   "name": "محمد بن عبداللطيف",
+   "phone": "",
+   "joined": "2026-11",
+   "active": true
+  },
+  {
+   "id": "mwq8rzl94alw",
+   "name": "محمد بن صالح",
+   "phone": "",
+   "joined": "2026-11",
+   "active": true
+  },
+  {
+   "id": "mwq8rzl9sq3j",
+   "name": "عمر بن عبداللطيف",
+   "phone": "",
+   "joined": "2026-11",
+   "active": true
+  },
+  {
+   "id": "mwq8rzl9h2tk",
+   "name": "أحمد بن موسى الموسى",
+   "phone": "",
+   "joined": "2026-11",
+   "active": true
+  }
+ ],
  "expenses": [],
  "receipts": []
 }
