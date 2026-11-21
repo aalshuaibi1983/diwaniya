@@ -1,6 +1,6 @@
 {
  "version": 2,
- "updatedAt": 1795255463726,
+ "updatedAt": 1795255471340,
  "settings": {
   "fundName": "الديوانية",
   "managerName": "بو عيسى",
@@ -22,15 +22,7 @@
    "payments": {}
   }
  },
- "members": [
-  {
-   "id": "mwpm35m37mzj",
-   "name": "نواف سعد",
-   "phone": "",
-   "joined": "2026-11",
-   "active": true
-  }
- ],
+ "members": [],
  "expenses": [],
  "receipts": []
 }
