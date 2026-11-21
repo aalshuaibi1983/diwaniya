@@ -243,7 +243,8 @@ hr.s{border:0;border-top:1px solid var(--bd);margin:16px 0}
 .mc2.s-w .bar .progress i{background:linear-gradient(90deg,#e0a400,#f0c24a)}
 .mc2.s-r .bar .progress i{background:linear-gradient(90deg,#c0392b,#e06c5c)}
 .mc2 .bar .row{justify-content:space-between;font-size:13px;color:var(--mut);font-weight:700}
-.mc2 .ft{margin:10px -14px 0;padding:9px 14px;background:var(--soft);border-top:1px solid var(--bd);color:var(--g);font-weight:800;font-size:14px;display:flex;justify-content:space-between}
+.mc2 .ft .btn{padding:5px 12px;font-size:13px}
+.mc2 .ft{align-items:center;margin:10px -14px 0;padding:9px 14px;background:var(--soft);border-top:1px solid var(--bd);color:var(--g);font-weight:800;font-size:14px;display:flex;justify-content:space-between}
 .ftabs{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto}
 .ftabs button{flex:1;border:1px solid var(--line);background:var(--card);border-radius:14px;padding:9px 6px;font-weight:800;font-size:14px;color:var(--mut);cursor:pointer;white-space:nowrap}
 .ftabs button b{display:block;font-size:20px}
@@ -303,6 +304,16 @@ hr.s{border:0;border-top:1px solid var(--bd);margin:16px 0}
 .months .mo.cancel .mh em{color:var(--red);font-size:0} .months .mo.cancel .mh em:after{content:"سيُلغى";font-size:11px}
 .months .mo.cancel .ma{text-decoration:line-through;opacity:.6}
 .months{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+.paywho{display:flex;align-items:center;gap:12px;background:var(--g3);border:1px solid color-mix(in srgb,var(--g) 25%,transparent);border-radius:16px;padding:12px;margin-bottom:14px}
+.paywho .mid{flex:1;min-width:0}.paywho b{display:block;font-size:18px}.paywho small{color:var(--mut);font-size:12.5px}
+.qk{display:flex;gap:6px;flex-wrap:wrap;margin:2px 0 4px}
+.pplist{display:flex;flex-direction:column;gap:8px}
+.pprow{display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border:1px solid var(--bd);border-radius:14px;background:var(--card);cursor:pointer;text-align:right;color:var(--ink);font-family:inherit}
+.pprow:active{background:var(--g3)}
+.pprow .mid{flex:1;min-width:0;display:flex;flex-direction:column}
+.pprow b{font-size:16px}.pprow small{color:var(--mut);font-size:12.5px}
+.pprow em{font-style:normal;font-weight:800;color:var(--mut);font-size:18px}
+.pprow em.ok{color:var(--ok)} .pprow em.no{color:var(--red)}
 /* PDF templates */
 #pdf-holder{position:fixed;top:0;left:0;z-index:-5;opacity:0;pointer-events:none;direction:rtl}
 .pdf{background:#fff;color:#1d2b26;font-family:var(--font),sans-serif;direction:rtl;letter-spacing:0}
@@ -667,7 +678,7 @@ function memberCardHTML(m,y){
     :`<div class="bar"><div class="row"><span>القطة ${fmt(mFee(m,y))} ريال شهرياً</span><span>${fmt(memberPaid(m,y))} ر.س</span></div></div>`;
   return `<div class="mc2 ${cls}" onclick="${isAdmin?`memberCard('${m.id}')`:`statementModal('${m.id}')`}">
    <div class="t">${avatar(m)}<div class="nm2"><b>${esc(m.name)}${m.id===myId()?' '+STAR:''}</b><span>${paidLabel(m,y)}</span></div><div class="st">${box}</div></div>
-   ${bar}<div class="ft"><span>${isAdmin?'تعديل / كشف الحساب':'عرض كشف الحساب'}</span><span>‹</span></div></div>`;
+   ${bar}<div class="ft">${isAdmin?`<span>تعديل / كشف الحساب</span><button class="btn sm p" onclick="event.stopPropagation();payModal('${m.id}')">تسجيل دفعة</button>`:'<span>عرض كشف الحساب</span><span>‹</span>'}</div></div>`;
 }
 let _stY=null;
 const STAR='<svg class="i" viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.5 2.9 1-6.1-4.4-4.3 6.1-.9z" style="fill:currentColor"/></svg>';
@@ -826,10 +837,14 @@ function cellTap(mid,mo){const p=pays(curYear,mid)[mo];if(p)paymentDetail(mid,cu
 function payModal(mid,mo){
   const ms=members(curYear).filter(m=>m.active!==false);
   if(!ms.length)return toast('أضف الأعضاء أولاً');
-  mid=mid||ms[0].id;
+  if(!mid)return payPicker();
+  const m=D.members.find(x=>x.id===mid);
   openModal('تسجيل دفعة',`
-  <div class="f"><label>العضو</label><select id="p_m" onchange="payMonths()">${ms.map(m=>`<option value="${m.id}" ${m.id===mid?'selected':''}>${esc(m.name)}</option>`).join('')}</select></div>
-  <div class="f" id="p_mbox"><label>الأشهر المدفوعة — ${curYear}</label><span class="hint">لإلغاء دفعة شهر مدفوع أزل علامته ثم احفظ</span><div class="months" id="p_months"></div></div>
+  <input type="hidden" id="p_m" value="${mid}">
+  <div class="paywho">${avatar(m)}<div class="mid"><small>الدفعة باسم</small><b>${esc(m.name)}</b><small>${paidLabel(m,curYear)}</small></div><button class="btn sm l" onclick="payPicker()">تغيير العضو</button></div>
+  <div class="f" id="p_mbox"><label>الأشهر — ${curYear}</label>
+   <div class="qk"><button class="btn sm gd" onclick="payQuick('year')">السنة كاملة</button><button class="btn sm l" onclick="payQuick('due')">المستحق فقط</button><button class="btn sm l" onclick="payQuick('none')">مسح التحديد</button></div>
+   <span class="hint">لإلغاء دفعة شهر مدفوع أزل علامته ثم احفظ</span><div class="months" id="p_months"></div></div>
   <div class="f2"><div class="f"><label id="p_amtl">الإجمالي (ر.س)</label><input id="p_amt" inputmode="decimal"></div>
   <div class="f"><label>تاريخ الاستلام</label><input id="p_date" type="date" value="${todayISO()}"></div></div>
   <div class="f"><label>ملاحظة (اختياري)</label><input id="p_note" placeholder="مثال: تحويل بنكي"></div>
@@ -848,6 +863,17 @@ function payMonths(pre){
     return `<label class="mo ${paid?'paidm':''}"><span class="mh"><input type="checkbox" value="${mo}" ${paid?'checked data-pm="1"':mo===first?'checked':''} onchange="payRecalc()">${n}${paid?' <em>مدفوع</em>':''}</span><span class="mi"><input class="ma" id="ma${mo}" inputmode="decimal" value="${paid?p[mo].amount:(f||'')}" placeholder="المبلغ" ${paid?`data-paid="${p[mo].amount}"`:''} oninput="payRecalc()"><small>ر.س</small></span></label>`}).join('');
   payRecalc();
 }
+function payPicker(){
+  const ms=members(curYear).filter(m=>m.active!==false).slice().sort((a,b)=>a.name.localeCompare(b.name,'ar'));
+  const mo=focusMonth();
+  openModal('تسجيل دفعة — اختر العضو',`<input class="search" id="pp_q" placeholder="ابحث بالاسم…" oninput="ppFilter(this.value)">
+  <div class="pplist">${ms.map(m=>{const ok=!isFree(m)&&pays(curYear,m.id)[mo],a=arrears(m,curYear);
+    return `<button class="pprow" data-n="${esc(m.name)}" onclick="payModal('${m.id}')">${avatar(m)}<span class="mid"><b>${esc(m.name)}</b><small>${isFree(m)?'مبلغ مقطوع':ok?'سدّد قطة '+MONTHS[mo-1]:a.count?'عليه '+a.count+' '+(a.count>2&&a.count<11?'أشهر':'شهر'):'لم يسدد '+MONTHS[mo-1]+' بعد'}</small></span><em class="${ok?'ok':a.count?'no':''}">${ok?'✓':'‹'}</em></button>`}).join('')}</div>`);
+}
+function ppFilter(q){q=q.trim();document.querySelectorAll('.pprow').forEach(b=>b.style.display=!q||b.dataset.n.includes(q)?'':'none')}
+function payQuick(k){const mid=$('p_m').value,m=D.members.find(x=>x.id===mid);
+  document.querySelectorAll('#p_months .mh input:not([data-pm])').forEach(c=>{const mo=+c.value,st=cellState(m,curYear,mo);c.checked=k==='year'?true:k==='due'?st==='due':false});
+  payRecalc()}
 function paySel(){return [...document.querySelectorAll('#p_months .mh input:checked:not([data-pm])')].map(i=>+i.value)}
 function payCancels(){return [...document.querySelectorAll('#p_months .mh input[data-pm]:not(:checked)')].map(i=>+i.value)}
 function removePay(mid,y,mo){const p=Y(y).payments[mid]&&Y(y).payments[mid][mo];if(!p)return;delete Y(y).payments[mid][mo];const r=D.receipts.find(r=>r.no===p.rno);if(r){r.months=r.months.filter(x=>x!==mo);r.amount=Math.round((r.amount-num(p.amount))*100)/100;if(!r.months.length)D.receipts=D.receipts.filter(x=>x!==r)}}
@@ -855,7 +881,7 @@ function payEdits(){return [...document.querySelectorAll('#p_months .ma[data-pai
 function payRecalc(){const sel=paySel();const tot=sel.reduce((a,mo)=>a+num($('ma'+mo).value),0);
   if(!$('p_amt').readOnly)return;
   $('p_amt').value=sel.length?tot:'';const ed=payEdits();
-  $('p_sum').textContent=(sel.length?`${sel.length} ${sel.length>2&&sel.length<11?'أشهر':'شهر'}: ${sel.map(mo=>MONTHS[mo-1]+' '+fmt(num($('ma'+mo).value))).join('، ')}`:'اختر شهراً لتسجيل دفعة جديدة')+(ed.length?` · تعديل مبلغ: ${ed.map(e=>MONTHS[e.mo-1]+' '+fmt(e.amt)).join('، ')}`:'')+(payCancels().length?` · إلغاء دفعة: ${payCancels().map(mo=>MONTHS[mo-1]).join('، ')}`:'');
+  $('p_sum').textContent=(sel.length?`${sel.length} ${sel.length>2&&sel.length<11?'أشهر':sel.length>10?'شهراً':'شهر'}: ${sel.map(mo=>MONTHS[mo-1]+' '+fmt(num($('ma'+mo).value))).join('، ')}`:'اختر شهراً لتسجيل دفعة جديدة')+(ed.length?` · تعديل مبلغ: ${ed.map(e=>MONTHS[e.mo-1]+' '+fmt(e.amt)).join('، ')}`:'')+(payCancels().length?` · إلغاء دفعة: ${payCancels().map(mo=>MONTHS[mo-1]).join('، ')}`:'');
   document.querySelectorAll('#p_months .mo').forEach(l=>{const c=l.querySelector('.mh input');l.classList.toggle('cancel',!!c.dataset.pm&&!c.checked)})}
 function recalcReceipt(no){const r=D.receipts.find(x=>x.no===no);if(!r)return;const yy=Y(r.year);let t=0;for(const mid in yy.payments)for(const mo in yy.payments[mid])if(yy.payments[mid][mo].rno===no)t+=num(yy.payments[mid][mo].amount);yy.extras.forEach(e=>{if(e.rno===no)t+=num(e.amount)});r.amount=Math.round(t*100)/100}
 function savePayment(){
