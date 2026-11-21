@@ -7,7 +7,7 @@
 <meta name="theme-color" content="#0f4c3a">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Reem+Kufi:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
 <style>
 :root{
@@ -15,7 +15,7 @@
   --bg:#f6f2e9; --card:#fff; --ink:#1d2b26; --mut:#6b7a74; --line:#e6e0d2;
   --red:#c0392b; --red2:#fbe9e7; --ok:#1e8e5a; --ok2:#e3f4ea;
   --r:18px; --sh:0 6px 22px rgba(15,76,58,.08);
-  --soft:#faf8f3; --soft2:#f3efe5; --bd:#efe9dc; --hero2:#fbf7ec; --warn2:#fff3d6; --font:'Tajawal'; --disp:'Reem Kufi';
+  --soft:#faf8f3; --soft2:#f3efe5; --bd:#efe9dc; --hero2:#fbf7ec; --warn2:#fff3d6; --font:'Tajawal';
 }
 body{--h1:var(--g);--h2:var(--g2);--pdfh:var(--g)}
 /* ===== الثيمات ===== */
@@ -33,7 +33,7 @@ body[data-theme=night] .hero .big{color:#fff} body[data-theme=night] .banner .in
 body[data-theme=night] .tile.paid{border-color:#2a5c45} body[data-theme=night] .tile.due{border-color:#6a2c26}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0}
-body{font-family:var(--font),system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:16px;line-height:1.55;padding-bottom:110px}
+body{font-family:var(--font),system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:16px;line-height:1.55;padding-bottom:90px}
 button,input,select,textarea{font-family:inherit;font-size:16px}
 .hidden{display:none!important}
 /* header */
@@ -93,10 +93,10 @@ main{max-width:980px;margin:-40px auto 0;padding:0 14px;position:relative;z-inde
 .actions .btn .ic{font-size:22px}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 /* tabs */
-.tabs{position:fixed;bottom:calc(10px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:min(94vw,520px);background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:22px;display:flex;padding:6px;gap:4px;z-index:20;box-shadow:0 10px 30px rgba(0,0,0,.14)}
-.tabs button{flex:1;background:none;border:0;padding:7px 2px;color:var(--mut);font-size:12px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;border-radius:16px;transition:background .2s,color .2s}
-.tabs button .ic{font-size:20px}
-.tabs button.on{color:#fff;background:var(--g)}
+.tabs{position:fixed;bottom:0;inset-inline:0;background:var(--card);border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:6px 6px calc(6px + env(safe-area-inset-bottom));z-index:20;box-shadow:0 -4px 18px rgba(0,0,0,.05)}
+.tabs button{flex:1;background:none;border:0;padding:6px 2px;color:var(--mut);font-size:12.5px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;border-radius:12px}
+.tabs button .ic{font-size:21px}
+.tabs button.on{color:var(--g);background:var(--g3)}
 /* grid table */
 .search{width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:13px;background:var(--soft);margin-bottom:10px}
 .gridwrap{overflow-x:auto;margin:0;padding:0;border-radius:12px}
@@ -244,63 +244,6 @@ hr.s{border:0;border-top:1px solid var(--bd);margin:16px 0}
 .fgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
 .fo{padding:10px;border:2px solid var(--line);border-radius:14px;background:var(--card);cursor:pointer;color:var(--ink)}
 .fo b{display:block;font-size:18px} .fo small{color:var(--mut);font-family:var(--font)}
-/* ===== الواجهة المطوّرة ===== */
-.majlis{background:var(--card);border:1px solid var(--bd);border-radius:30px;padding:14px 8px 16px;margin-bottom:14px;box-shadow:var(--sh);text-align:center;position:relative}
-.ring{width:100%;max-width:350px;display:block;margin:0 auto}
-.ring .trk{fill:none;stroke:var(--soft2);stroke-width:7}
-.ring .arc{fill:none;stroke:var(--gold);stroke-width:7;stroke-linecap:round;animation:arcin 1.6s cubic-bezier(.2,.8,.2,1) .2s both}
-@keyframes arcin{from{stroke-dashoffset:var(--c)}}
-.ring .core{fill:var(--soft)}
-.ring .core2{fill:none;stroke:var(--bd);stroke-width:1}
-.seat{cursor:pointer;animation:seatin .45s cubic-bezier(.3,1.4,.5,1) var(--d) both;transform-box:fill-box;transform-origin:center}
-@keyframes seatin{from{opacity:0;transform:scale(.3)}}
-.seat circle{fill:var(--card);stroke:var(--line);stroke-width:2;stroke-dasharray:3 3}
-.seat.ok circle{fill:var(--g);stroke:var(--gold);stroke-width:2.5;stroke-dasharray:none}
-.seat.me circle{stroke:var(--gold);stroke-width:3.5;stroke-dasharray:none}
-.seat text{font:700 14px var(--font),system-ui,sans-serif;fill:var(--mut);text-anchor:middle;pointer-events:none}
-.seat.ok text{fill:#fff}
-.ring .lb{font:500 13px var(--font),system-ui,sans-serif;fill:var(--mut);text-anchor:middle}
-.ring .big{font:700 48px var(--disp),var(--font),system-ui,sans-serif;fill:var(--ink);text-anchor:middle}
-.ring .cur{font:700 14px var(--font),system-ui,sans-serif;fill:var(--gold);text-anchor:middle}
-.ring .stt{font:700 12.5px var(--font),system-ui,sans-serif;fill:var(--g);text-anchor:middle}
-@media(prefers-reduced-motion:reduce){.ring .arc,.seat{animation:none}}
-.mline{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:6px}
-.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:99px;background:var(--soft);border:1px solid var(--bd);font-size:13.5px;font-weight:700;color:var(--ink)}
-.pill .dot{width:9px;height:9px;border-radius:50%;background:var(--g)}
-.pill .dot.h{background:transparent;border:2px dashed var(--mut);width:10px;height:10px}
-.hint2{font-size:12.5px;color:var(--mut);margin-top:8px}
-.eq{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:end;gap:4px;background:var(--card);border:1px solid var(--bd);border-radius:22px;padding:14px 12px;margin-bottom:14px;box-shadow:var(--sh)}
-.eq div{text-align:center;min-width:0}
-.eq small{display:block;font-size:11.5px;color:var(--mut);white-space:nowrap}
-.eq b{font:700 19px var(--disp),var(--font),system-ui,sans-serif;display:block}
-.eq i{font-style:normal;font-weight:800;font-size:18px;color:var(--mut);padding-bottom:2px}
-.eq .in b{color:var(--ok)} .eq .out b{color:var(--red)}
-.eq .op{grid-column:1/-1;display:flex;justify-content:space-between;border-bottom:1px dashed var(--line);padding-bottom:9px;margin-bottom:6px;font-size:13px;color:var(--mut)}
-.eq .op b{font-size:15px;display:inline;color:var(--ink)}
-.chart{width:100%;display:block}
-.chart .bi{fill:var(--g)} .chart .be{fill:var(--gold)} .chart .ml{font:600 10px var(--font),system-ui,sans-serif;fill:var(--mut);text-anchor:middle}
-.chart .ml.now{fill:var(--g);font-weight:800} .chart .gl{stroke:var(--bd);stroke-width:1}
-.lg{display:flex;gap:14px;font-size:12.5px;color:var(--mut);font-weight:700}
-.lg span:before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;margin-inline-end:5px;vertical-align:-1px;background:var(--g)}
-.lg span.e:before{background:var(--gold)}
-.feed .day{font-size:12.5px;font-weight:800;color:var(--mut);margin:12px 0 4px}
-.feed .day:first-child{margin-top:0}
-.fi{display:flex;align-items:center;gap:12px;padding:9px 0}
-.fi .fic{width:40px;height:40px;border-radius:14px;display:grid;place-items:center;font-size:18px;flex:none}
-.fi.in .fic{background:var(--ok2);color:var(--ok);font-weight:800}
-.fi.out .fic{background:var(--gold2)}
-.fi .mid{flex:1;min-width:0}.fi .mid b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.fi .mid small{color:var(--mut)}
-.fi .am{font:700 16px var(--disp),var(--font),system-ui,sans-serif;white-space:nowrap}
-.fi.in .am{color:var(--ok)} .fi.out .am{color:var(--red)}
-.mebar{display:flex;align-items:center;gap:12px;background:linear-gradient(120deg,var(--g),var(--g2));color:#fff;border-radius:22px;padding:14px;margin-bottom:14px;cursor:pointer;box-shadow:var(--sh)}
-.mebar .av{border:2px solid rgba(255,255,255,.6)}
-.mebar .mid{flex:1;min-width:0}.mebar small{opacity:.8;font-size:12.5px}.mebar b{display:block;font-size:17px}
-.mebar .st{background:rgba(255,255,255,.16);border-radius:14px;padding:6px 10px;text-align:center;font-weight:800;font-size:13px;white-space:nowrap}
-.mebar .st big{display:block;font:700 18px var(--disp),var(--font),system-ui,sans-serif}
-.pick{background:var(--card);border:1px dashed var(--line);border-radius:22px;padding:14px;margin-bottom:14px;display:flex;gap:10px;align-items:center}
-.pick select{flex:1;padding:11px;border:1px solid var(--line);border-radius:13px;background:var(--soft);color:var(--ink)}
-body[data-theme=night] .seat.ok text{fill:#08130f} body[data-theme=night] .mebar{color:#08130f} body[data-theme=night] .mebar .st{background:rgba(0,0,0,.12)} body[data-theme=night] .mebar .av{border-color:rgba(0,0,0,.25)} body[data-theme=night] .tabs button.on{color:#08130f}
-.brand h1{font-family:var(--disp),var(--font),system-ui,sans-serif;font-weight:700;letter-spacing:0}
 /* PDF templates */
 #pdf-holder{position:fixed;top:0;left:-12000px;z-index:-1}
 .pdf{background:#fff;color:#1d2b26;font-family:var(--font),sans-serif;direction:rtl;letter-spacing:0}
@@ -531,82 +474,45 @@ function bannerHTML(){
 }
 
 /* ---- الرئيسية ---- */
-function ringSVG(y,mo,bal){
-  const ms=monthInfo(y,mo).all,n=ms.length,S=330,C=165,R=126;
-  const paid=ms.filter(m=>pays(y,m.id)[mo]).length,pct=n?paid/n:0;
-  const sr=n?Math.max(7,Math.min(19,(Math.PI*R/n)*.8)):0;
-  const seats=ms.map((m,i)=>{const a=-Math.PI/2-i*2*Math.PI/n,x=(C+R*Math.cos(a)).toFixed(1),yy=(C+R*Math.sin(a)).toFixed(1),ok=!!pays(y,m.id)[mo];
-    const ini=esc(m.name.replace(/^(أبو|ابو|بو|أبا)\s+/,'').charAt(0));
-    return `<g class="seat ${ok?'ok':''} ${m.id===myId()?'me':''}" style="--d:${300+i*45}ms" onclick="${isAdmin?`memberCard('${m.id}')`:`statementModal('${m.id}')`}"><circle cx="${x}" cy="${yy}" r="${sr.toFixed(1)}"/>${sr>=12?`<text x="${x}" y="${yy}" dy=".36em">${ini}</text>`:''}<title>${esc(m.name)}${ok?' — سدّد':' — لم يسدد'}</title></g>`}).join('');
-  const RA=153,circ=2*Math.PI*RA,txt=(bal<0?'−':'')+fmt(Math.abs(bal)),fs=txt.length>8?34:txt.length>6?40:48;
-  return `<svg viewBox="0 0 ${S} ${S}" class="ring" role="img" aria-label="رصيد الصندوق ${txt} ريال، ${paid} من ${n} سددوا">
-   <circle cx="${C}" cy="${C}" r="${RA}" class="trk"/>
-   <circle cx="${C}" cy="${C}" r="${RA}" class="arc" stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${(circ*(1-pct)).toFixed(1)}" style="--c:${circ.toFixed(1)}" transform="translate(${S} 0) scale(-1 1) rotate(-90 ${C} ${C})"/>
-   <circle cx="${C}" cy="${C}" r="${R-sr-14}" class="core"/><circle cx="${C}" cy="${C}" r="${R-sr-22}" class="core2"/>
-   ${seats}
-   <text x="${C}" y="${C-36}" class="lb">رصيد الصندوق</text>
-   <text x="${C}" y="${C+fs/2-4}" direction="ltr" class="big" style="font-size:${fs}px">${txt}</text>
-   <text x="${C}" y="${C+fs/2+20}" class="cur">ريال سعودي</text>
-   <text x="${C}" y="${C+fs/2+44}" class="stt">${n?`${paid} من ${n} سددوا`:''}</text>
-  </svg>`;
-}
-function yearChart(y){
-  const inc=Array(12).fill(0),ex=Array(12).fill(0);
-  for(const mid in Y(y).payments)for(const mo in Y(y).payments[mid]){const p=Y(y).payments[mid][mo];const dm=(p.date||'').startsWith(y+'-')?+p.date.slice(5,7):+mo;inc[dm-1]+=num(p.amount)}
-  yExp(y).forEach(e=>ex[+e.date.slice(5,7)-1]+=num(e.amount));
-  const mx=Math.max(1,...inc,...ex),W=340,H=150,top=8,bot=22,ch=H-top-bot,cw=W/12,bw=Math.min(9,cw/2-3);
-  let g='';for(let k=0;k<=3;k++){const yy=top+ch*k/3;g+=`<line x1="0" x2="${W}" y1="${yy}" y2="${yy}" class="gl"/>`}
-  for(let i=0;i<12;i++){const cx=W-(i+.5)*cw,hi=inc[i]/mx*ch,he=ex[i]/mx*ch;
-    g+=`<rect class="bi" x="${cx+1}" y="${top+ch-hi}" width="${bw}" height="${Math.max(hi,inc[i]?2:0)}" rx="3"><title>${MONTHS[i]}: محصّل ${fmt(inc[i])}</title></rect>`;
-    g+=`<rect class="be" x="${cx-bw-1}" y="${top+ch-he}" width="${bw}" height="${Math.max(he,ex[i]?2:0)}" rx="3"><title>${MONTHS[i]}: مصروف ${fmt(ex[i])}</title></rect>`;
-    g+=`<text class="ml ${y===NY&&i+1===NM?'now':''}" x="${cx}" y="${H-6}">${MONTHS[i].slice(0,3)}</text>`}
-  return `<svg viewBox="0 0 ${W} ${H}" class="chart" role="img" aria-label="المحصّل والمصروف لكل شهر">${g}</svg>`;
-}
-function feed(y,limit){
-  const it=[];
-  D.receipts.filter(r=>r.year==y).forEach(r=>{const m=D.members.find(x=>x.id===r.memberId);it.push({d:r.date,t:'in',a:r.amount,h:m?m.name:'—',s:'قطة '+r.months.map(x=>MONTHS[x-1]).join('، '),id:m&&m.id})});
-  yExp(y).forEach(e=>it.push({d:e.date,t:'out',a:e.amount,h:e.desc||e.cat,s:e.cat,ic:CAT_IC[e.cat]||'📦',eid:e.id}));
-  it.sort((a,b)=>b.d.localeCompare(a.d));
-  const yd=new Date(NY,NM-1,ND-1),yISO=`${yd.getFullYear()}-${pad(yd.getMonth()+1)}-${pad(yd.getDate())}`;
-  const lbl=d=>d===todayISO()?'اليوم':d===yISO?'أمس':`${+d.slice(8)} ${MONTHS[+d.slice(5,7)-1]}`;
-  let h='',last='';
-  it.slice(0,limit).forEach(x=>{if(x.d!==last){last=x.d;h+=`<div class="day">${lbl(x.d)}</div>`}
-    const click=x.t==='in'&&x.id?`onclick="statementModal('${x.id}')"`:isAdmin&&x.eid?`onclick="expenseModal('${x.eid}')"`:'';
-    h+=`<div class="fi ${x.t}" ${click} style="${click?'cursor:pointer':''}"><div class="fic">${x.t==='in'?'+':x.ic}</div><div class="mid"><b>${esc(x.h)}</b><small>${esc(x.s)}</small></div><div class="am"><bdi dir="ltr">${x.t==='in'?'+':'−'}${fmt(x.a)}</bdi></div></div>`});
-  return {h,total:it.length};
-}
-let feedN=8;
 function vHome(){
-  const y=curYear,op=opening(y),inc=income(y),ex=expTotal(y),cl=op+inc-ex,mo=focusMonth(),mi=monthInfo(y,mo),isLast=y===lastYear();
+  const y=curYear, op=opening(y), inc=income(y), ex=expTotal(y), cl=op+inc-ex, mo=focusMonth(), mi=monthInfo(y,mo);
+  const isLast=y===lastYear();
+  const pct=mi.all.length?Math.round(mi.paid.length/mi.all.length*100):0;
   let h='';
-  if(!D.members.length&&!isAdmin)return `<div class="card empty"><span class="ic">☕</span>لم تُضف بيانات الديوانية بعد.<br>يظهر هنا رصيد الصندوق والقطة الشهرية فور إضافتها من المدير.</div>`;
-  if(isAdmin&&(!D.members.length||!fee(y)))h+=`<div class="card" style="background:var(--gold2);border-color:var(--line)"><b>البداية في 3 خطوات</b><ol style="margin:8px 0 0;padding-inline-start:20px">
+  if(!D.members.length&&!isAdmin)return `<div class="card empty"><span class="ic">☕</span>لم تُضف بيانات الصندوق بعد.<br>سيظهر هنا رصيد الصندوق والقطة الشهرية فور تحديث المدير.</div>`;
+  h+=`<div class="card hero"><div class="lbl">${isLast?'رصيد الصندوق الحالي':'رصيد نهاية '+y}</div><div class="big">${fmt(cl)} <span>ر.س</span></div>
+  <div class="live">${isAdmin?(canPublish()?'⚡ نشر تلقائي فوري مفعّل':'⚠️ النشر التلقائي غير مفعّل على هذا الجهاز'):'<i></i> مباشر · يتحدث تلقائياً'}</div><div class="upd">${D.updatedAt?'آخر تحديث: '+new Date(D.updatedAt).toLocaleString('en-GB',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):''}</div></div><!--ME-->`;
+  if(isAdmin){
+    if(!D.members.length||!fee(y))h+=`<div class="card" style="background:var(--gold2);border-color:#e8d79a"><b>🚀 البداية في 3 خطوات</b><ol style="margin:8px 0 0;padding-inline-start:20px">
       <li>${fee(y)?'✅':''} حدّد قيمة القطة الشهرية والرصيد الافتتاحي <button class="btn sm l" onclick="go('settings')">الإعدادات</button></li>
       <li>${D.members.length?'✅':''} أضف أسماء الأعضاء <button class="btn sm l" onclick="addMembersModal()">إضافة</button></li>
-      <li>كل ما تضيفه يظهر للأعضاء تلقائياً</li></ol></div>`;
-  // المجلس
-  h+=`<div class="majlis">${ringSVG(y,mo,isLast?cl:cl)}
-    <div class="mline"><span class="pill"><i class="dot"></i>سدّد قطة ${MONTHS[mo-1]}</span><span class="pill"><i class="dot h"></i>لم يسدد بعد</span>${fee(y)?`<span class="pill">القطة ${fmt(fee(y))} ريال · موعدها ${D.settings.dueDay} ${MONTHS[mo-1]}</span>`:''}</div>
-    <div class="hint2">${isLast?'':'رصيد نهاية '+y+' · '}اضغط على أي مقعد لعرض كشف حساب صاحبه</div></div>`;
-  // حسابي
-  if(!isAdmin&&D.members.length){const me=D.members.find(m=>m.id===myId());
-    if(me){const a=arrears(me,y),dc=dueCount(me,y);
-      h+=`<div class="mebar" onclick="statementModal('${me.id}')">${avatar(me)}<div class="mid"><small>حسابي</small><b>${esc(me.name)}</b><small>${paidLabel(me,y)}</small></div><div class="st">${a.count?`<big>${fmt(a.amount)}</big>عليك`:`<big>✓</big>${dc.paid}/${dc.due} شهر`}</div></div>`}
-    else h+=`<div class="pick"><span style="font-size:22px">👤</span><select onchange="if(this.value)statementModal(this.value)"><option value="">اختر اسمك لعرض كشف حسابك</option>${members(y).slice().sort((a,b)=>a.name.localeCompare(b.name,'ar')).map(m=>`<option value="${m.id}">${esc(m.name)}</option>`).join('')}</select></div>`}
-  if(isAdmin)h+=`<div class="actions">
+      <li>اضغط «نشر التحديثات» لتظهر للأعضاء</li></ol></div>`;
+    h+=`<div class="actions">
       <button class="btn p" onclick="payModal()"><span class="ic">💵</span>تسجيل دفعة</button>
       <button class="btn gd" onclick="expenseModal()"><span class="ic">🧾</span>إضافة مصروف</button>
       <button class="btn l" onclick="addMembersModal()"><span class="ic">👤</span>إضافة أعضاء</button>
       <button class="btn l" onclick="reminderModal()"><span class="ic">🔔</span>تذكير القطة</button></div>`;
-  // المعادلة
-  h+=`<div class="eq"><div class="op"><span>حساب ${y}</span><span>رصيد أول السنة <b>${fmt(op)}</b></span></div>
-    <div class="in"><small>القطة المحصّلة</small><b>${fmt(inc)}</b></div><i>−</i><div class="out"><small>المصروفات</small><b>${fmt(ex)}</b></div><i>=</i><div><small>صافي السنة</small><b style="color:${inc-ex<0?'var(--red)':'var(--ok)'}"><bdi dir="ltr">${inc-ex<0?'−':'+'}${fmt(Math.abs(inc-ex))}</bdi></b></div></div>`;
-  // الرسم
-  h+=`<div class="card"><h2>حركة ${y} شهرياً<span class="lg"><span>محصّل</span><span class="e">مصروف</span></span></h2>${yearChart(y)}</div>`;
-  // السجل
-  const f=feed(y,feedN);
-  h+=`<div class="card feed"><h2>آخر الحركات</h2>${f.total?f.h:`<div class="empty">لا توجد حركات في ${y} بعد</div>`}
-    ${f.total>feedN?`<button class="btn l" style="width:100%;margin-top:8px" onclick="feedN+=10;render()">عرض المزيد</button>`:''}</div>`;
+  }
+  h+=`<div class="stats" style="margin-bottom:14px">
+    <div class="stat"><div class="t">الرصيد الافتتاحي ${y}</div><div class="v">${fmt(op)}</div></div>
+    <div class="stat in"><div class="t">المحصّل من القطة</div><div class="v">+${fmt(inc)}</div></div>
+    <div class="stat out"><div class="t">المصروفات</div><div class="v">−${fmt(ex)}</div></div>
+    <div class="stat fee"><div class="t">القطة الشهرية</div><div class="v">${fee(y)?fmt(fee(y)):'—'}</div></div></div>`;
+  if(mi.all.length){
+    h+=`<div class="card"><h2>قطة شهر ${MONTHS[mo-1]} ${y}<span class="sub">${mi.paid.length} من ${mi.all.length} سددوا</span></h2>
+    <div class="progress"><i style="width:${pct}%"></i></div>
+    <div class="chips">${mi.paid.map(m=>`<span class="chip ok">${esc(m.name)}</span>`).join('')}${mi.unpaid.map(m=>`<span class="chip no">${esc(m.name)}</span>`).join('')}</div>
+    ${isAdmin&&mi.unpaid.length?`<div class="row" style="margin-top:12px"><button class="btn sm gd" onclick="reminderModal(${mo})">📄 تذكير PDF</button><button class="btn sm wa" onclick="waReminder(${mo})">إرسال تذكير واتساب</button></div>`:''}</div>`;
+  }
+  if(!isAdmin&&D.members.length){const me=D.members.find(m=>m.id===myId());
+    if(me){const st=mStatus(me,y),a=arrears(me,y),dc=dueCount(me,y);
+      h=h.replace('<!--ME-->',`<div class="card me-card"><div class="me-top">${avatar(me)}<div style="flex:1;min-width:0"><small style="color:var(--mut)">حسابي</small><div style="font-weight:800;font-size:18px">${esc(me.name)}</div></div><span class="badge ${st.c}">${st.t}</span></div>
+      <div class="sbox" style="margin:12px 0 10px"><div><small>المدفوع ${y}</small><b style="color:var(--ok)">${fmt(memberPaid(me,y))}</b></div><div><small>المسدد</small><b>${dc.paid}/${dc.due}</b></div><div><small>المتأخرات</small><b style="color:${a.count?'var(--red)':'var(--ok)'}">${fmt(a.amount)}</b></div></div>
+      <button class="btn p" style="width:100%" onclick="statementModal('${me.id}')">📋 عرض كشف حسابي</button></div>`)}
+    else h=h.replace('<!--ME-->',`<div class="card me-card" style="text-align:center"><div style="font-size:30px">👤</div><b style="font-size:17px">اعرض كشف حسابك</b><div style="color:var(--mut);font-size:14px;margin-bottom:10px">اختر اسمك لمعرفة مدفوعاتك ومتأخراتك</div>
+      <select class="search" style="margin:0" onchange="if(this.value)statementModal(this.value)"><option value="">— اختر اسمك —</option>${members(y).slice().sort((a,b)=>a.name.localeCompare(b.name,'ar')).map(m=>`<option value="${m.id}">${esc(m.name)}</option>`).join('')}</select></div>`)}
+  const ex5=yExp(y).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5);
+  h+=`<div class="card"><h2>آخر المصروفات<span class="sub">${ex5.length?`<button class="btn sm l" onclick="go('expenses')">عرض الكل</button>`:''}</span></h2>${ex5.length?`<div class="list">${ex5.map(expRow).join('')}</div>`:`<div class="empty">لا توجد مصروفات في ${y}</div>`}</div>`;
   return h;
 }
 
