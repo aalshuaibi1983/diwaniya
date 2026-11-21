@@ -1,6 +1,6 @@
 {
  "version": 2,
- "updatedAt": 1795255584835,
+ "updatedAt": 1795256222200,
  "settings": {
   "fundName": "الديوانية",
   "managerName": "بو عيسى",
@@ -35,7 +35,8 @@
    "name": "عبدالرحمن بن محمد",
    "phone": "",
    "joined": "2026-11",
-   "active": true
+   "active": true,
+   "feeMode": "free"
   },
   {
    "id": "mwq8rzl9x44y",
