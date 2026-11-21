@@ -293,6 +293,11 @@ hr.s{border:0;border-top:1px solid var(--bd);margin:16px 0}
 .months .mo .mi small{font-size:11px;color:var(--mut)}
 .months .mo:has(.mh input:checked:not(:disabled)){border-color:var(--g);background:var(--g3)}
 #p_amt[readonly]{background:var(--soft2);font-weight:800}
+.months .mo.paidm{background:var(--ok2);border-color:color-mix(in srgb,var(--ok) 35%,transparent)}
+.months .mo .mh em{font-style:normal;font-size:11px;color:var(--ok);font-weight:800}
+.rcdate{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.rcdate label{font-weight:800;font-size:14px;white-space:nowrap}
+.rcdate input{flex:1;padding:9px 10px;border:1px solid var(--line);border-radius:11px;background:var(--soft);color:var(--ink)}
 /* PDF templates */
 #pdf-holder{position:fixed;top:0;left:0;z-index:-5;opacity:0;pointer-events:none;direction:rtl}
 .pdf{background:#fff;color:#1d2b26;font-family:var(--font),sans-serif;direction:rtl;letter-spacing:0}
@@ -687,7 +692,7 @@ function statementModal(id,y){
   <div class="sec-t"><span>أشهر ${y}</span><small style="color:var(--mut);font-weight:500">القطة ${mFee(m,y)?money(mFee(m,y)):'—'}</small></div>
   <div class="tiles">${tiles}</div>`}
   <div class="sec-t"><span>سجل المدفوعات</span><small style="color:var(--mut);font-weight:500">الإجمالي منذ الانضمام ${money(allPaid)}</small></div>
-  ${rc.length?`<div class="list hist">${rc.map(r=>`<div class="li ${isAdmin?'click':''}" ${isAdmin?`onclick="receiptModal(${r.no})"`:''}><div class="ico"><svg class="i" viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg></div><div class="mid"><b>${r.months.length?r.months.map(x=>MONTHS[x-1]).join('، '):'مساهمة'}</b><small>${fdate(r.date)} · إيصال #${r.no}</small></div><div class="amt"><bdi dir="ltr">+${fmt(r.amount)}</bdi></div></div>`).join('')}</div>`:`<div class="empty" style="padding:12px">لا توجد مدفوعات في ${y}</div>`}
+  ${rc.length?`<div class="list hist">${rc.map(r=>`<div class="li ${isAdmin?'click':''}" ${isAdmin?`onclick="receiptModal(${r.no})"`:''}><div class="ico"><svg class="i" viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg></div><div class="mid"><b>${r.months.length?r.months.map(x=>MONTHS[x-1]).join('، '):'مساهمة'}</b><small>${fdate(r.date)} · إيصال #${r.no}${isAdmin?' · اضغط للإرسال':''}</small></div><div class="amt"><bdi dir="ltr">+${fmt(r.amount)}</bdi></div></div>`).join('')}</div>`:`<div class="empty" style="padding:12px">لا توجد مدفوعات في ${y}</div>`}
   <div class="row" style="margin-top:16px">${pdfBtn}${isAdmin?'':`<button class="btn mebtn" onclick="setMe('${id}')">${myId()===id?'<svg class="i" viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.5 2.9 1-6.1-4.4-4.3 6.1-.9z" style="fill:currentColor"/></svg> حسابي':'☆ هذا أنا'}</button>`}</div>
   <div id="pdfbox" style="margin-top:10px"></div>`);
 }
@@ -835,21 +840,26 @@ function payMonths(pre){
   $('p_mbox').classList.remove('hidden');
   let first=pre;if(!first){for(let i=1;i<=12;i++){const st=cellState(m,y,i);if(st==='due'||st==='up'){first=i;break}}}
   $('p_months').innerHTML=MONTHS.map((n,i)=>{const mo=i+1,paid=!!p[mo];
-    return `<label class="mo ${paid?'dis':''}"><span class="mh"><input type="checkbox" value="${mo}" ${paid?'checked disabled':mo===first?'checked':''} onchange="payRecalc()">${n}${paid?' ✓':''}</span><span class="mi"><input class="ma" id="ma${mo}" inputmode="decimal" value="${paid?p[mo].amount:(f||'')}" placeholder="المبلغ" ${paid?'disabled':''} oninput="payRecalc()"><small>ر.س</small></span></label>`}).join('');
+    return `<label class="mo ${paid?'paidm':''}"><span class="mh"><input type="checkbox" value="${mo}" ${paid?'checked disabled':mo===first&&!paid?'checked':''} onchange="payRecalc()">${n}${paid?' <em>مدفوع</em>':''}</span><span class="mi"><input class="ma" id="ma${mo}" inputmode="decimal" value="${paid?p[mo].amount:(f||'')}" placeholder="المبلغ" ${paid?`data-paid="${p[mo].amount}"`:''} oninput="payRecalc()"><small>ر.س</small></span></label>`}).join('');
   payRecalc();
 }
 function paySel(){return [...document.querySelectorAll('#p_months .mh input:checked:not(:disabled)')].map(i=>+i.value)}
+function payEdits(){return [...document.querySelectorAll('#p_months .ma[data-paid]')].filter(i=>num(i.value)!==num(i.dataset.paid)).map(i=>({mo:+i.id.slice(2),amt:num(i.value)}))}
 function payRecalc(){const sel=paySel();const tot=sel.reduce((a,mo)=>a+num($('ma'+mo).value),0);
   if(!$('p_amt').readOnly)return;
-  $('p_amt').value=sel.length?tot:'';
-  $('p_sum').textContent=sel.length?`${sel.length} ${sel.length>2&&sel.length<11?'أشهر':'شهر'}: ${sel.map(mo=>MONTHS[mo-1]+' '+fmt(num($('ma'+mo).value))).join('، ')}`:'اختر شهراً واحداً على الأقل'}
+  $('p_amt').value=sel.length?tot:'';const ed=payEdits();
+  $('p_sum').textContent=(sel.length?`${sel.length} ${sel.length>2&&sel.length<11?'أشهر':'شهر'}: ${sel.map(mo=>MONTHS[mo-1]+' '+fmt(num($('ma'+mo).value))).join('، ')}`:'اختر شهراً لتسجيل دفعة جديدة')+(ed.length?` · تعديل مبلغ: ${ed.map(e=>MONTHS[e.mo-1]+' '+fmt(e.amt)).join('، ')}`:'')}
+function recalcReceipt(no){const r=D.receipts.find(x=>x.no===no);if(!r)return;const yy=Y(r.year);let t=0;for(const mid in yy.payments)for(const mo in yy.payments[mid])if(yy.payments[mid][mo].rno===no)t+=num(yy.payments[mid][mo].amount);yy.extras.forEach(e=>{if(e.rno===no)t+=num(e.amount)});r.amount=Math.round(t*100)/100}
 function savePayment(){
   const mid=$('p_m').value,sel=paySel();
   const date=$('p_date').value||todayISO(),note=$('p_note').value.trim();
   const mm=D.members.find(x=>x.id===mid);
   if(isFree(mm)){const amt=num($('p_amt').value);if(amt<=0)return toast('اكتب المبلغ');const no=D.settings.nextReceipt++;Y(curYear).extras.push({id:uid(),memberId:mid,amount:amt,date,rno:no,note});
     D.receipts.push({no,memberId:mid,year:curYear,months:[],amount:amt,date,note,kind:'extra'});save('تم تسجيل المساهمة ✓');receiptModal(no);return}
-  if(!sel.length)return toast('اختر الشهر');
+  const ed=payEdits();
+  if(ed.length){const pm=Y(curYear).payments[mid];for(const e of ed){if(e.amt<=0)return toast('مبلغ '+MONTHS[e.mo-1]+' غير صحيح')}
+    const touched=new Set();ed.forEach(e=>{pm[e.mo].amount=e.amt;if(pm[e.mo].rno)touched.add(pm[e.mo].rno)});touched.forEach(recalcReceipt)}
+  if(!sel.length){if(ed.length){closeModal();save('تم تعديل المبالغ ✓')}else toast('اختر الشهر');return}
   const am={};for(const mo of sel){am[mo]=num($('ma'+mo).value);if(am[mo]<=0)return toast('اكتب مبلغ شهر '+MONTHS[mo-1])}
   const amt=Object.values(am).reduce((a,b)=>a+b,0);
   const no=D.settings.nextReceipt++;const y=Y(curYear);
@@ -858,11 +868,14 @@ function savePayment(){
   D.receipts.push({no,memberId:mid,year:curYear,months:sel,amount:amt,date,note});
   save('تم تسجيل الدفعة ✓');receiptModal(no);
 }
+function ensureReceipt(mid,y,mo){const p=pays(y,mid)[mo];if(p.rno&&D.receipts.find(r=>r.no===p.rno))return p.rno;const no=D.settings.nextReceipt++;p.rno=no;D.receipts.push({no,memberId:mid,year:y,months:[mo],amount:num(p.amount),date:p.date||todayISO(),note:''});save();return no}
 function paymentDetail(mid,y,mo){
   const m=D.members.find(x=>x.id===mid),p=pays(y,mid)[mo];
-  openModal(`${m.name} — ${MONTHS[mo-1]} ${y}`,`<div class="kv"><span>المبلغ</span><b>${money(p.amount)}</b><span>تاريخ الاستلام</span><b>${fdate(p.date)}</b><span>رقم الإيصال</span><b>#${p.rno||'—'}</b></div>
-  <div class="row">${p.rno&&D.receipts.find(r=>r.no===p.rno)?`<button class="btn p" onclick="receiptModal(${p.rno})"><svg class="i" viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg> عرض الإيصال</button>`:''}<button class="btn r" onclick="delPayment('${mid}',${y},${mo})">حذف الدفعة</button></div>`);
+  openModal(`${m.name} — ${MONTHS[mo-1]} ${y}`,`<div class="f2"><div class="f"><label>المبلغ (ر.س)</label><input id="pd_amt" inputmode="decimal" value="${p.amount}"></div><div class="f"><label>تاريخ الاستلام</label><input id="pd_date" type="date" value="${p.date||todayISO()}"></div></div>
+  <div class="kv"><span>رقم الإيصال</span><b>#${p.rno||'—'}</b></div>
+  <div class="row"><button class="btn p" onclick="savePayDetail('${mid}',${y},${mo})">حفظ</button><button class="btn gd" onclick="receiptModal(ensureReceipt('${mid}',${y},${mo}))"><svg class="i" viewBox="0 0 24 24"><path d="M12 15V3M7 8l5-5 5 5M5 14v6h14v-6"/></svg> إرسال الإيصال</button><button class="btn r sm" onclick="delPayment('${mid}',${y},${mo})">حذف الدفعة</button></div>`);
 }
+function savePayDetail(mid,y,mo){const p=pays(y,mid)[mo],a=num($('pd_amt').value);if(a<=0)return toast('اكتب المبلغ');p.amount=a;p.date=$('pd_date').value||p.date;if(p.rno)recalcReceipt(p.rno);closeModal();save('تم الحفظ ✓')}
 function delPayment(mid,y,mo){askConfirm(`حذف دفعة ${MONTHS[mo-1]}؟`,()=>{const p=Y(y).payments[mid][mo];delete Y(y).payments[mid][mo];
   const r=D.receipts.find(r=>r.no===p.rno);if(r){r.months=r.months.filter(x=>x!==mo);r.amount=Math.round((r.amount-num(p.amount))*100)/100;if(!r.months.length)D.receipts=D.receipts.filter(x=>x!==r)}
   closeModal();save('تم حذف الدفعة')},'حذف')}
@@ -947,9 +960,10 @@ function receiptModal(no){
   const r=D.receipts.find(x=>x.no===no);if(!r)return toast('الإيصال غير موجود');
   const m=D.members.find(x=>x.id===r.memberId)||{name:''};
   const html=receiptHTML(r);
-  openModal('إيصال استلام #'+no,previewBox(html,560)+'<div id="pdfbox"></div>'+(isAdmin?`<button class="btn r sm" style="margin-top:12px" onclick="delReceipt(${no})"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg> حذف هذه الدفعة</button>`:''));
+  openModal('إيصال استلام #'+no,(isAdmin?`<div class="rcdate"><label>تاريخ الإيصال</label><input type="date" value="${r.date}" onchange="setReceiptDate(${no},this.value)"></div>`:'')+previewBox(html,560)+'<div id="pdfbox"></div>'+(isAdmin?`<button class="btn r sm" style="margin-top:12px" onclick="delReceipt(${no})"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg> حذف هذه الدفعة</button>`:''));
   fitPreview();pdfFlow(html,`إيصال-${no}-${m.name}.pdf`,'a5','pdfbox',`إيصال استلام #${no} — ${m.name}\n${D.settings.fundName}: ${money(r.amount)}\nتابع حسابك: ${portalURL()}`);
 }
+function setReceiptDate(no,d){if(!d)return;const r=D.receipts.find(x=>x.no===no);if(!r)return;r.date=d;const yy=Y(r.year);for(const mid in yy.payments)for(const mo in yy.payments[mid])if(yy.payments[mid][mo].rno===no)yy.payments[mid][mo].date=d;yy.extras.forEach(e=>{if(e.rno===no)e.date=d});save('تم تغيير التاريخ ✓');receiptModal(no)}
 function delReceipt(no){askConfirm('حذف هذه الدفعة وإيصالها؟',()=>{const r=D.receipts.find(x=>x.no===no);if(r){const yy=Y(r.year);for(const mid in yy.payments)for(const mo in yy.payments[mid])if(yy.payments[mid][mo].rno===no)delete yy.payments[mid][mo];yy.extras=yy.extras.filter(e=>e.rno!==no)}
   D.receipts=D.receipts.filter(x=>x.no!==no);closeModal();save('تم حذف الدفعة')},'حذف')}
 function reminderModal(mo){
