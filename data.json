@@ -1,6 +1,6 @@
 {
  "version": 2,
- "updatedAt": 1795279188414,
+ "updatedAt": 1795280198179,
  "settings": {
   "fundName": "الديوانية",
   "managerName": "بو عيسى",
@@ -21,63 +21,7 @@
    "opening": null,
    "payments": {
     "mwq8rzl8gcgr": {},
-    "mwq8rzl9dkid": {
-     "1": {
-      "amount": 350,
-      "date": "2026-11-21",
-      "rno": 3
-     },
-     "2": {
-      "amount": 350,
-      "date": "2026-11-21",
-      "rno": 3
-     },
-     "3": {
-      "amount": 350,
-      "date": "2026-11-21",
-      "rno": 3
-     },
-     "4": {
-      "amount": 350,
-      "date": "2026-11-21",
-      "rno": 3
-     },
-     "5": {
-      "amount": 350,
-      "date": "2026-11-21",
-      "rno": 3
-     },
-     "6": {
-      "amount": 350,
-      "date": "2026-11-21",
-      "rno": 3
-     },
-     "7": {
-      "amount": 350,
-      "date": "2026-11-21",
-      "rno": 3
-     },
-     "8": {
-      "amount": 350,
-      "date": "2026-11-21",
-      "rno": 3
-     },
-     "9": {
-      "amount": 350,
-      "date": "2026-11-21",
-      "rno": 3
-     },
-     "10": {
-      "amount": 350,
-      "date": "2026-11-21",
-      "rno": 3
-     },
-     "11": {
-      "amount": 350,
-      "date": "2026-11-21",
-      "rno": 3
-     }
-    }
+    "mwq8rzl9dkid": {}
    },
    "extras": []
   }
@@ -184,27 +128,5 @@
   }
  ],
  "expenses": [],
- "receipts": [
-  {
-   "no": 3,
-   "memberId": "mwq8rzl9dkid",
-   "year": 2026,
-   "months": [
-    1,
-    2,
-    3,
-    4,
-    5,
-    6,
-    7,
-    8,
-    9,
-    10,
-    11
-   ],
-   "amount": 3850,
-   "date": "2026-11-21",
-   "note": ""
-  }
- ]
+ "receipts": []
 }
