@@ -1,6 +1,6 @@
 {
  "version": 2,
- "updatedAt": 1795257545060,
+ "updatedAt": 1795258060005,
  "settings": {
   "fundName": "الديوانية",
   "managerName": "بو عيسى",
@@ -20,18 +20,7 @@
    "fee": 350,
    "opening": null,
    "payments": {
-    "mwq8rzl8gcgr": {
-     "11": {
-      "amount": 350,
-      "date": "2026-11-21",
-      "rno": 1
-     },
-     "12": {
-      "amount": 350,
-      "date": "2026-11-21",
-      "rno": 2
-     }
-    }
+    "mwq8rzl8gcgr": {}
    },
    "extras": []
   }
@@ -138,28 +127,5 @@
   }
  ],
  "expenses": [],
- "receipts": [
-  {
-   "no": 1,
-   "memberId": "mwq8rzl8gcgr",
-   "year": 2026,
-   "months": [
-    11
-   ],
-   "amount": 350,
-   "date": "2026-11-21",
-   "note": ""
-  },
-  {
-   "no": 2,
-   "memberId": "mwq8rzl8gcgr",
-   "year": 2026,
-   "months": [
-    12
-   ],
-   "amount": 350,
-   "date": "2026-11-21",
-   "note": ""
-  }
- ]
+ "receipts": []
 }
