@@ -19,7 +19,7 @@
 }
 body{--h1:var(--g);--h2:var(--g2);--pdfh:var(--g)}
 /* ===== الثيمات ===== */
-body[data-theme=sadu]{--g:#7d211c;--g2:#9c3329;--g3:#f4e2dc;--gold:#b98a30;--gold2:#f3e6c9;--bg:#efe8dc;--card:#fbf8f2;--soft:#f6f0e5;--soft2:#ebe1d0;--bd:#e4d9c6;--hero2:#f7f1e6;--line:#dccfb9;--ink:#241913;--mut:#7a6a5c;--h1:#2a1c15;--h2:#1c130e;--pdfh:#2a1c15;--sh:0 4px 18px rgba(42,28,21,.08)}
+body[data-theme=sadu]{--g:#5a3a24;--g2:#7a5236;--g3:#efe3d8;--gold:#b98a30;--gold2:#f3e6c9;--bg:#efe8dc;--card:#fbf8f2;--soft:#f6f0e5;--soft2:#ebe1d0;--bd:#e4d9c6;--hero2:#f7f1e6;--line:#dccfb9;--ink:#241913;--mut:#7a6a5c;--h1:#2a1c15;--h2:#1c130e;--pdfh:#2a1c15;--sh:0 4px 18px rgba(42,28,21,.08)}
 body[data-theme=sadu] .card,body[data-theme=sadu] .stat,body[data-theme=sadu] .mc2{border-radius:14px}
 body[data-theme=sadu] .card h2:before{content:"";width:8px;height:8px;background:var(--gold);transform:rotate(45deg);flex:none;margin-inline-end:2px}
 body[data-theme=sadu] .card h2{justify-content:flex-start}
@@ -29,7 +29,7 @@ body[data-theme=sadu] .hero{position:relative;padding:26px 16px}
 body[data-theme=sadu] .hero:before{content:"";position:absolute;inset:7px;border:1px solid var(--gold);opacity:.5;border-radius:9px;pointer-events:none}
 body[data-theme=sadu] .hero:after{content:"";position:absolute;top:3px;left:50%;width:9px;height:9px;background:var(--gold);transform:translateX(-50%) rotate(45deg)}
 body[data-theme=sadu] .banner .in{border-radius:14px}
-body[data-theme=sadu] .pdf .gold{height:12px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='14'%3E%3Crect width='32' height='14' fill='%231c1410'/%3E%3Cpath d='M0 13L8 3l8 10z' fill='%238a2420'/%3E%3Cpath d='M16 13l8-10 8 10z' fill='%23c99a3a'/%3E%3Cpath d='M16 1l2.5 3-2.5 3-2.5-3z M0 1l2.5 3L0 7 M32 1l-2.5 3L32 7' fill='%23efe6d4'/%3E%3Crect y='13' width='32' height='1' fill='%23efe6d4'/%3E%3C/svg%3E") repeat-x;background-size:28px 12px}
+body[data-theme=sadu] .pdf .gold{height:12px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='14'%3E%3Crect width='32' height='14' fill='%231c1410'/%3E%3Cpath d='M0 13L8 3l8 10z' fill='%235a3a24'/%3E%3Cpath d='M16 13l8-10 8 10z' fill='%23c99a3a'/%3E%3Cpath d='M16 1l2.5 3-2.5 3-2.5-3z M0 1l2.5 3L0 7 M32 1l-2.5 3L32 7' fill='%23efe6d4'/%3E%3Crect y='13' width='32' height='1' fill='%23efe6d4'/%3E%3C/svg%3E") repeat-x;background-size:28px 12px}
 body[data-theme=navy]{--g:#14213d;--g2:#2a4073;--g3:#e7ebf4;--gold:#d4a537;--gold2:#f7eed3;--bg:#f1f3f8;--soft:#f6f7fb;--soft2:#e9ecf3;--bd:#e3e7f0;--hero2:#f4f6fb;--line:#dde2ec;--ink:#17203a;--mut:#69718a;--sh:0 6px 22px rgba(20,33,61,.09)}
 body[data-theme=sand]{--g:#8c3f22;--g2:#b8653d;--g3:#f6e6da;--gold:#c99536;--gold2:#f6e7c9;--bg:#f4ebde;--soft:#faf4ea;--soft2:#efe3d1;--bd:#ecdfcc;--hero2:#fbf3e7;--line:#e6d7c1;--ink:#3a2418;--mut:#86705f;--sh:0 6px 22px rgba(140,63,34,.09)}
 body[data-theme=coffee]{--g:#4a2c20;--g2:#77492f;--g3:#efe3da;--gold:#c8873a;--gold2:#f5e3c8;--bg:#f2ebe4;--soft:#f8f3ee;--soft2:#ebe0d6;--bd:#e8ddd2;--hero2:#f8f0e7;--line:#e2d4c6;--ink:#2e1d16;--mut:#7f6a5e;--sh:0 6px 22px rgba(74,44,32,.1)}
@@ -50,7 +50,7 @@ button,input,select,textarea{font-family:inherit;font-size:16px}
 /* header */
 .top{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cpath d='M20 4l8 16-8 16-8-16z' fill='none' stroke='%23ffffff' stroke-opacity='.05'/%3E%3Cpath d='M0 20h4M36 20h4' stroke='%23ffffff' stroke-opacity='.05'/%3E%3C/svg%3E"),linear-gradient(180deg,var(--h1),var(--h2));color:#fff;padding:14px 16px 34px;position:relative;text-align:center}
 .top:after{content:"";position:absolute;inset:auto 0 0 0;height:4px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
-body[data-theme=sadu] .top:after{height:14px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='14'%3E%3Crect width='32' height='14' fill='%231c1410'/%3E%3Cpath d='M0 13L8 3l8 10z' fill='%238a2420'/%3E%3Cpath d='M16 13l8-10 8 10z' fill='%23c99a3a'/%3E%3Cpath d='M16 1l2.5 3-2.5 3-2.5-3z M0 1l2.5 3L0 7 M32 1l-2.5 3L32 7' fill='%23efe6d4'/%3E%3Crect y='13' width='32' height='1' fill='%23efe6d4'/%3E%3C/svg%3E") repeat-x;background-size:32px 14px}
+body[data-theme=sadu] .top:after{height:14px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='14'%3E%3Crect width='32' height='14' fill='%231c1410'/%3E%3Cpath d='M0 13L8 3l8 10z' fill='%235a3a24'/%3E%3Cpath d='M16 13l8-10 8 10z' fill='%23c99a3a'/%3E%3Cpath d='M16 1l2.5 3-2.5 3-2.5-3z M0 1l2.5 3L0 7 M32 1l-2.5 3L32 7' fill='%23efe6d4'/%3E%3Crect y='13' width='32' height='1' fill='%23efe6d4'/%3E%3C/svg%3E") repeat-x;background-size:32px 14px}
 .top-row{display:flex;flex-direction:column;align-items:center;gap:6px;max-width:980px;margin:auto;position:relative;z-index:1}
 .brand{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0;padding:30px 0 0}
 .logo{width:60px;height:68px;flex:none;display:grid;place-items:center}
@@ -438,7 +438,7 @@ function monthInfo(y,mo){const ms=members(y).filter(m=>cellState(m,y,mo)!=='na')
 const focusMonth=()=>curYear===NY?NM:(curYear<NY?12:1);
 
 /* =============== الواجهة =============== */
-const THEMES=[['sadu','السدو النجدي','#2a1c15','#7d211c','#efe8dc'],['green','الأخضر الملكي','#0f4c3a','#c9a227','#f6f2e9'],['navy','الكحلي الفاخر','#14213d','#d4a537','#f1f3f8'],['sand','الرملي النجدي','#8c3f22','#c99536','#f4ebde'],['coffee','القهوة العربية','#4a2c20','#c8873a','#f2ebe4'],['maroon','العنّابي','#6d1f2f','#c9a227','#f6f0ee'],['teal','الفيروزي العصري','#0f766e','#f59e0b','#edf6f5'],['night','الليلي الذهبي','#0c1411','#e0bb4a','#15201c']];
+const THEMES=[['sadu','السدو النجدي','#2a1c15','#5a3a24','#efe8dc'],['green','الأخضر الملكي','#0f4c3a','#c9a227','#f6f2e9'],['navy','الكحلي الفاخر','#14213d','#d4a537','#f1f3f8'],['sand','الرملي النجدي','#8c3f22','#c99536','#f4ebde'],['coffee','القهوة العربية','#4a2c20','#c8873a','#f2ebe4'],['maroon','العنّابي','#6d1f2f','#c9a227','#f6f0ee'],['teal','الفيروزي العصري','#0f766e','#f59e0b','#edf6f5'],['night','الليلي الذهبي','#0c1411','#e0bb4a','#15201c']];
 const FONTS=[['Tajawal','تجوال'],['Cairo','القاهرة'],['Almarai','المراعي'],['IBM Plex Sans Arabic','آي بي إم بلكس'],['Readex Pro','ريدكس'],['Noto Kufi Arabic','نوتو كوفي']];
 const _fl={};
 function loadFont(f){if(_fl[f]||f==='Tajawal')return;_fl[f]=1;const l=document.createElement('link');l.rel='stylesheet';l.href=`https://fonts.googleapis.com/css2?family=${f.replace(/ /g,'+')}:wght@400;500;700;800&display=swap`;document.head.appendChild(l)}
