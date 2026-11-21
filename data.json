@@ -1,13 +1,13 @@
 {
  "version": 2,
- "updatedAt": 1795256222200,
+ "updatedAt": 1795257099803,
  "settings": {
   "fundName": "الديوانية",
   "managerName": "بو عيسى",
   "pinHash": "eaf0c22db0acd8b7fa53c9015d307ecdbeb72dd2430f93589207f5e7b8d26b1b",
   "openingBalance": 0,
   "dueDay": 27,
-  "nextReceipt": 1,
+  "nextReceipt": 2,
   "repo": {
    "owner": "aalshuaibi1983",
    "name": "diwaniya",
@@ -19,7 +19,16 @@
   "2026": {
    "fee": 350,
    "opening": null,
-   "payments": {}
+   "payments": {
+    "mwq8rzl8gcgr": {
+     "11": {
+      "amount": 350,
+      "date": "2026-11-21",
+      "rno": 1
+     }
+    }
+   },
+   "extras": []
   }
  },
  "members": [
@@ -124,5 +133,17 @@
   }
  ],
  "expenses": [],
- "receipts": []
+ "receipts": [
+  {
+   "no": 1,
+   "memberId": "mwq8rzl8gcgr",
+   "year": 2026,
+   "months": [
+    11
+   ],
+   "amount": 350,
+   "date": "2026-11-21",
+   "note": ""
+  }
+ ]
 }
